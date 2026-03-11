@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { CompletionScreen } from './CompletionScreen';
 import { EmailGate, getStoredEmail } from './EmailGate';
 import { ExamplesPanel } from './ExamplesPanel';
 import { ModuleViewer } from './ModuleViewer';
@@ -25,6 +26,7 @@ export function TrainingPage() {
     saveModuleScore,
     saveQuizAnswers,
     getQuizAnswers,
+    isAllComplete,
   } = useTrainingProgress();
 
   const [view, setView] = useState<TrainingView>(
@@ -37,6 +39,9 @@ export function TrainingPage() {
   }
 
   if (view === 'home') {
+    if (isAllComplete) {
+      return <CompletionScreen />;
+    }
     return <TrainingHome onStartTraining={() => setView('modules')} />;
   }
 

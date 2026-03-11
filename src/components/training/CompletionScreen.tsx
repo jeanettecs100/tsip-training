@@ -20,7 +20,7 @@ export function CompletionScreen() {
             your first task.
           </p>
           <a
-            href='/dashboard'
+            href='https://tsip.ai/dashboard'
             className='mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90'
           >
             Go to Dashboard
