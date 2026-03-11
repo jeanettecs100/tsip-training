@@ -16,6 +16,10 @@ export const module4Steps: Step[] = [
     id: 'm4-rubric-structure',
     title: 'Rubric Structure',
     body: 'Rubrics should be organized according to the following categories. All categories are required in almost all cases — exception include tasks without hardcoded inputs in the prompt (no Input Data Accuracy section) and "Create an Error" tasks (no Structural Completenss or Input Data Accuracy sections)',
+    callout: {
+      type: 'warning',
+      text: 'In line with prompt input value requirements, all inputs and outputs checked in the rubric should include at least 1 decimal point and not be rounded any further.',
+    },
     table: {
       headers: ['Category', 'What It Tests', 'Example Criteria'],
       rows: [
@@ -91,6 +95,10 @@ export const module4Steps: Step[] = [
     id: 'm4-weighting',
     title: 'Weighting Philosophy',
     body: 'Points should reflect the importance of what each criterion tests. Higher-weight checks should test harder, more mission-critical items. Include negative values to deduct points for common pitfalls like error values.',
+    callout: {
+      type: 'warning',
+      text: 'All point values must be multiples of 5. Positive values range from +5 to +30, and negative values range from -10 to -25.',
+    },
     table: {
       headers: ['Weight Range', 'Criteria Type', 'Examples'],
       rows: [

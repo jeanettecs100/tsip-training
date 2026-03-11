@@ -59,7 +59,7 @@ export const module3Steps: Step[] = [
     body: 'Every prompt must meet these key requirements. Falling short on any of them will result in revision requests.',
     bullets: [
       '+ Clearly defined analytical objective of what is being built, rebuilt, or fixed',
-      '+ Explicit inclusion of all required assumptions and inputs',
+      '+ Explicit inclusion of all required assumptions and inputs (rounding to 1 decimal point is permitted)',
       '+ Natural, professional language that reflects your individual tone',
       '+ Leaves room for more than one correct solution',
       '- Overspecifying the spreadsheet — do not specify exact rows, columns, Excel functions, or layout unless absolutely necessary',

@@ -1,5 +1,5 @@
 import { CheckCircle, XCircle } from '@phosphor-icons/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -24,6 +24,22 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+function saveOrderToStorage(stepId: string, order: string[]) {
+  try {
+    localStorage.setItem(`tsip-ordering-${stepId}`, JSON.stringify(order));
+  } catch { /* ignore */ }
+}
+
+function loadOrderFromStorage(stepId: string): string[] | null {
+  try {
+    const stored = localStorage.getItem(`tsip-ordering-${stepId}`);
+    if (!stored) return null;
+    return JSON.parse(stored) as string[];
+  } catch {
+    return null;
+  }
+}
+
 export function OrderingExercise({
   step,
   onComplete,
@@ -31,10 +47,14 @@ export function OrderingExercise({
   previousAnswer,
 }: OrderingExerciseProps) {
   const hasPrevious = previousAnswer !== undefined;
-  const [selected, setSelected] = useState<string[]>(
-    hasPrevious ? step.items : []
-  );
+  const [selected, setSelected] = useState<string[]>(() => {
+    if (hasPrevious) {
+      return loadOrderFromStorage(step.id) ?? step.items;
+    }
+    return [];
+  });
   const [showResult, setShowResult] = useState(hasPrevious);
+  const justSubmitted = useRef(false);
 
   const shuffledItems = useMemo(
     () => shuffleArray(step.items),
@@ -42,8 +62,12 @@ export function OrderingExercise({
   );
 
   useEffect(() => {
+    if (justSubmitted.current) {
+      justSubmitted.current = false;
+      return;
+    }
     if (previousAnswer !== undefined) {
-      setSelected(step.items);
+      setSelected(loadOrderFromStorage(step.id) ?? step.items);
       setShowResult(true);
       onComplete();
     } else {
@@ -64,6 +88,8 @@ export function OrderingExercise({
     setSelected(newSelected);
 
     if (newSelected.length === step.items.length) {
+      saveOrderToStorage(step.id, newSelected);
+      justSubmitted.current = true;
       setShowResult(true);
       const correct = newSelected.every((s, i) => s === step.items[i]);
       onAnswer?.(correct);
@@ -150,11 +176,25 @@ export function OrderingExercise({
         )}
 
         {showResult && !isCorrect && (
-          <div className='rounded-lg bg-rose-50 p-4 text-sm text-rose-800'>
-            <p className='font-medium'>Not quite right.</p>
-            <p className='mt-1'>
-              The correct order is: {step.items.map((item, i) => `${i + 1}. ${item}`).join(' \u2192 ')}
+          <div className='space-y-2'>
+            <p className='text-xs font-medium uppercase tracking-wider text-muted-foreground'>
+              Correct order
             </p>
+            {step.items.map((item, i) => (
+              <div
+                key={item}
+                className='flex items-center gap-3 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-left text-sm'
+              >
+                <span className='flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-medium text-white'>
+                  {i + 1}
+                </span>
+                <span className='flex-1'>{item}</span>
+                <CheckCircle
+                  className='size-5 text-emerald-500'
+                  weight='fill'
+                />
+              </div>
+            ))}
           </div>
         )}
 

@@ -264,7 +264,32 @@ export function TaskFormPreviewCard({ step, onComplete }: TaskFormPreviewCardPro
       setRubricError('Every rubric category must have at least one criterion.');
       hasError = true;
     } else {
-      setRubricError(undefined);
+      // Validate point values: must be multiples of 5, positive +5 to +30, negative -10 to -25
+      const invalidPoints: string[] = [];
+      for (const section of rubricValue?.sections ?? []) {
+        for (const criterion of section.criteria) {
+          const pts = criterion.points;
+          if (pts == null) {
+            invalidPoints.push(`"${criterion.question || '(empty)'}" has no point value`);
+          } else if (pts % 5 !== 0) {
+            invalidPoints.push(`${pts} pts is not a multiple of 5`);
+          } else if (pts > 0 && (pts < 5 || pts > 30)) {
+            invalidPoints.push(`+${pts} is outside the +5 to +30 range`);
+          } else if (pts < 0 && (pts < -25 || pts > -10)) {
+            invalidPoints.push(`${pts} is outside the -10 to -25 range`);
+          } else if (pts === 0) {
+            invalidPoints.push('0 pts is not allowed — use +5 to +30 or -10 to -25');
+          }
+        }
+      }
+      if (invalidPoints.length > 0) {
+        setRubricError(
+          'Point values must be multiples of 5: positive +5 to +30, negative -10 to -25.'
+        );
+        hasError = true;
+      } else {
+        setRubricError(undefined);
+      }
     }
 
     if (!complexityValue) {
