@@ -45,11 +45,12 @@ export function OrderingExercise({
     if (previousAnswer !== undefined) {
       setSelected(step.items);
       setShowResult(true);
+      onComplete();
     } else {
       setSelected([]);
       setShowResult(false);
     }
-  }, [step.id, previousAnswer, step.items]);
+  }, [step.id, previousAnswer, step.items]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const remaining = shuffledItems.filter(item => !selected.includes(item));
   const isCorrect =

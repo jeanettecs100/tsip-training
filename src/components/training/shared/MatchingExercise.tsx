@@ -51,11 +51,12 @@ export function MatchingExercise({ step, onComplete, onAnswer, previousAnswer }:
     if (previousAnswer !== undefined) {
       setSelectedTerm(null);
       setMatches(buildAllMatchedMap(step.pairs.length));
+      onComplete();
     } else {
       setSelectedTerm(null);
       setMatches(new Map());
     }
-  }, [step.id, previousAnswer, step.pairs.length]);
+  }, [step.id, previousAnswer, step.pairs.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTermClick = (termIndex: number) => {
     if (matches.has(termIndex)) return;

@@ -20,6 +20,7 @@ import type {
 interface ContentCardProps {
   step: ContentStep;
   onComplete: () => void;
+  isAlreadyCompleted?: boolean;
 }
 
 const CALLOUT_STYLES = {
@@ -319,14 +320,19 @@ function renderSection(
   );
 }
 
-export function ContentCard({ step, onComplete }: ContentCardProps) {
-  const [acknowledged, setAcknowledged] = useState(false);
+export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCardProps) {
+  const [acknowledged, setAcknowledged] = useState(!!isAlreadyCompleted);
   const [interactedFiles, setInteractedFiles] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setAcknowledged(false);
+    if (isAlreadyCompleted) {
+      setAcknowledged(true);
+      onComplete();
+    } else {
+      setAcknowledged(false);
+    }
     setInteractedFiles(new Set());
-  }, [step.id]);
+  }, [step.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAcknowledge = () => {
     setAcknowledged(true);

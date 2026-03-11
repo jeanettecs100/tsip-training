@@ -74,6 +74,7 @@ export function TrainingPage() {
           savedQuizAnswers={getQuizAnswers(viewingModule)}
           onSaveQuizAnswers={(answers) => saveQuizAnswers(viewingModule, answers)}
           getAllModuleScores={getModuleScore}
+          onTrainingComplete={() => setView('home')}
         />
       </main>
 

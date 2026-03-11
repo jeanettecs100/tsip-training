@@ -19,7 +19,7 @@ export const module1Steps: Step[] = [
     bullets: [
       'An Input Spreadsheet — the Excel model in its initial state before the task is completed',
       'A Prompt — the set of instructions outlining the context, inputs, and goal of the spreadsheet task',
-      'An Output Spreadsheet — the finished Excel that represents a realistic "verion up" of the model',
+      'An Output Spreadsheet — the finished Excel that represents a realistic "version up" of the model',
       'An Evaluation Rubric — scoring criteria with associated point values to quantitatively assess an LLM\'s ability to produce the desired output',
     ],
     callout: {
@@ -51,7 +51,7 @@ export const module1Steps: Step[] = [
       '+ Multi-step: Demand several connected stages of analysis',
       '+ Substantive: Require roughly 1+ hours of dedicated effort from a capable associate',
       '+ Original: Conceived entirely by you, not adapted from provided samples or previous tasks',
-      '+ Natural: Reads the way a senior banker would actually assign the work',
+      '+ Natural: Reads the way a senior finance professional would actually assign the work',
       '- Relies on proprietary or restricted information',
       '- Too straightforward (task could be completed in under 1 hour)',
       '- Directions are unclear or open to multiple interpretations',
@@ -77,7 +77,7 @@ export const module1Steps: Step[] = [
       },
       {
         term: 'Output Spreadsheet',
-        definition: 'The finished Excel that represents a realistic "verion up" of the model',
+        definition: 'The finished Excel that represents a realistic "version up" of the model',
       },
       {
         term: 'Evaluation Rubric',

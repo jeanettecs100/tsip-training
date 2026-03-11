@@ -80,7 +80,11 @@ export function useTrainingProgress() {
 
       // Normal progression on the current in-progress module
       if (nextIndex < totalSteps) {
-        updateProgress(prev => ({ ...prev, currentStepIndex: nextIndex }));
+        // Only advance the high-water mark, never regress it
+        updateProgress(prev => ({
+          ...prev,
+          currentStepIndex: Math.max(prev.currentStepIndex, nextIndex),
+        }));
         setViewingStepIndex(nextIndex);
       } else {
         // Complete this module and advance

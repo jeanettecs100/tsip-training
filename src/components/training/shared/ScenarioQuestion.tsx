@@ -29,11 +29,12 @@ export function ScenarioQuestion({
     if (previousAnswer !== undefined) {
       setSelectedIndex(previousAnswer);
       setShowResult(true);
+      onComplete();
     } else {
       setSelectedIndex(null);
       setShowResult(false);
     }
-  }, [step.id, previousAnswer]);
+  }, [step.id, previousAnswer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCorrect = selectedIndex === step.correctIndex;
 

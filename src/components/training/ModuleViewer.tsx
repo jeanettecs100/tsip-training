@@ -90,6 +90,7 @@ interface ModuleViewerProps {
   savedQuizAnswers?: QuizAnswerMap;
   onSaveQuizAnswers?: (answers: QuizAnswerMap) => void;
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
+  onTrainingComplete?: () => void;
 }
 
 export function ModuleViewer({
@@ -105,6 +106,7 @@ export function ModuleViewer({
   savedQuizAnswers,
   onSaveQuizAnswers,
   getAllModuleScores,
+  onTrainingComplete,
 }: ModuleViewerProps) {
   const [stepComplete, setStepComplete] = useState(false);
   const [quizResults, setQuizResults] = useState<Record<string, boolean>>({});
@@ -118,7 +120,7 @@ export function ModuleViewer({
   const isLastModule = moduleId === 7;
   const isFirstStep = safeStepIndex === 0;
 
-  // Initialize from saved answers when entering review mode, or reset for new module
+  // Initialize from saved answers when entering review mode, or restore in-progress answers from localStorage
   useEffect(() => {
     if (isReviewMode && savedQuizAnswers) {
       // Reconstruct quizResults from saved answers
@@ -137,8 +139,24 @@ export function ModuleViewer({
       setQuizResults(results);
       setQuizAnswers(savedQuizAnswers);
     } else {
-      setQuizResults({});
-      setQuizAnswers({});
+      // Try to restore in-progress answers from localStorage
+      try {
+        const storedAnswers = localStorage.getItem(`tsip-quiz-answers-${moduleId}`);
+        const storedResults = localStorage.getItem(`tsip-quiz-results-${moduleId}`);
+        if (storedAnswers) {
+          setQuizAnswers(JSON.parse(storedAnswers) as QuizAnswerMap);
+        } else {
+          setQuizAnswers({});
+        }
+        if (storedResults) {
+          setQuizResults(JSON.parse(storedResults) as Record<string, boolean>);
+        } else {
+          setQuizResults({});
+        }
+      } catch {
+        setQuizAnswers({});
+        setQuizResults({});
+      }
     }
     setShowScore(false);
   }, [moduleId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -148,12 +166,21 @@ export function ModuleViewer({
   };
 
   const handleAnswer = useCallback((stepId: string, correct: boolean, answerIndex: number) => {
-    setQuizResults(prev => ({ ...prev, [stepId]: correct }));
-    setQuizAnswers(prev => {
-      const next = { ...prev, [stepId]: answerIndex };
+    setQuizResults(prev => {
+      const next = { ...prev, [stepId]: correct };
+      try {
+        localStorage.setItem(`tsip-quiz-results-${moduleId}`, JSON.stringify(next));
+      } catch { /* ignore */ }
       return next;
     });
-  }, []);
+    setQuizAnswers(prev => {
+      const next = { ...prev, [stepId]: answerIndex };
+      try {
+        localStorage.setItem(`tsip-quiz-answers-${moduleId}`, JSON.stringify(next));
+      } catch { /* ignore */ }
+      return next;
+    });
+  }, [moduleId]);
 
   const sidebarItems = buildSidebarItems(steps, moduleId);
 
@@ -175,6 +202,11 @@ export function ModuleViewer({
         const correct = quizStepIds.filter(id => quizResults[id] === true).length;
         onModuleComplete?.({ correct, total: quizSteps.length });
         onSaveQuizAnswers?.(quizAnswers);
+        // Clean up in-progress localStorage keys
+        try {
+          localStorage.removeItem(`tsip-quiz-answers-${moduleId}`);
+          localStorage.removeItem(`tsip-quiz-results-${moduleId}`);
+        } catch { /* ignore */ }
       }
     }
 
@@ -183,6 +215,11 @@ export function ModuleViewer({
       const correct = quizStepIds.filter(id => quizResults[id] === true).length;
       onModuleComplete?.({ correct, total: quizSteps.length });
       onSaveQuizAnswers?.(quizAnswers);
+      // Clean up in-progress localStorage keys
+      try {
+        localStorage.removeItem(`tsip-quiz-answers-${moduleId}`);
+        localStorage.removeItem(`tsip-quiz-results-${moduleId}`);
+      } catch { /* ignore */ }
       setShowScore(true);
       return;
     }
@@ -198,6 +235,13 @@ export function ModuleViewer({
     // Review mode: on last quiz question, go back to score summary (skip for module 7)
     if (isReviewMode && isLastStep && savedQuizAnswers && moduleId !== 7) {
       setShowScore(true);
+      return;
+    }
+
+    // Last step of last module — go to completion screen
+    if (isLastStep && isLastModule && onTrainingComplete) {
+      onAdvance(steps.length);
+      onTrainingComplete();
       return;
     }
 
@@ -369,9 +413,11 @@ export function ModuleViewer({
       ? 'Back to Score'
       : 'Next'
     : isReviewMode
-      ? isLastStep
-        ? 'Next Module'
-        : 'Next'
+      ? isLastStep && isLastModule
+        ? 'Training Completed'
+        : isLastStep
+          ? 'Next Module'
+          : 'Next'
       : isLastStep && isLastModule
         ? 'Complete Training'
         : 'Continue';
@@ -390,6 +436,7 @@ export function ModuleViewer({
             const isActive = safeStepIndex >= item.startIndex && safeStepIndex <= item.endIndex;
             const isCompleted = isReviewMode || item.endIndex < maxStepIndex;
             const isClickable = isReviewMode || item.startIndex <= maxStepIndex;
+            const isReachable = isClickable && !isCompleted;
 
             return (
               <button
@@ -407,7 +454,8 @@ export function ModuleViewer({
                   'flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-xs transition-colors',
                   isActive && 'border-l-3 border-l-primary bg-primary/5 font-medium text-foreground',
                   !isActive && isCompleted && 'text-muted-foreground hover:bg-muted/50',
-                  !isActive && !isCompleted && 'cursor-not-allowed text-muted-foreground/40',
+                  !isActive && isReachable && 'text-muted-foreground hover:bg-muted/50',
+                  !isActive && !isCompleted && !isReachable && 'cursor-not-allowed text-muted-foreground/40',
                 )}
               >
                 {isCompleted && !isActive ? (
@@ -428,7 +476,7 @@ export function ModuleViewer({
                   <Circle
                     className={cn(
                       'size-4 shrink-0',
-                      isActive ? 'text-primary' : 'text-muted-foreground/30'
+                      isActive ? 'text-primary' : isReachable ? 'text-muted-foreground/60' : 'text-muted-foreground/30'
                     )}
                     weight={isActive ? 'fill' : 'regular'}
                   />
@@ -473,14 +521,18 @@ export function ModuleViewer({
 
           <div className='mb-8'>
             {currentStep.type === 'content' && (
-              <ContentCard step={currentStep} onComplete={handleStepComplete} />
+              <ContentCard
+                step={currentStep}
+                onComplete={handleStepComplete}
+                isAlreadyCompleted={isReviewMode || safeStepIndex < maxStepIndex}
+              />
             )}
             {currentStep.type === 'multiple-choice' && (
               <MultipleChoiceQuiz
                 step={currentStep}
                 onComplete={handleStepComplete}
                 onAnswer={(correct, idx) => handleAnswer(currentStep.id, correct, idx)}
-                previousAnswer={savedQuizAnswers?.[currentStep.id]}
+                previousAnswer={quizAnswers[currentStep.id] ?? savedQuizAnswers?.[currentStep.id]}
               />
             )}
             {currentStep.type === 'matching' && (
@@ -488,7 +540,7 @@ export function ModuleViewer({
                 step={currentStep}
                 onComplete={handleStepComplete}
                 onAnswer={(correct) => handleAnswer(currentStep.id, correct, -1)}
-                previousAnswer={savedQuizAnswers?.[currentStep.id]}
+                previousAnswer={quizAnswers[currentStep.id] ?? savedQuizAnswers?.[currentStep.id]}
               />
             )}
             {currentStep.type === 'ordering' && (
@@ -496,7 +548,7 @@ export function ModuleViewer({
                 step={currentStep}
                 onComplete={handleStepComplete}
                 onAnswer={(correct) => handleAnswer(currentStep.id, correct, -1)}
-                previousAnswer={savedQuizAnswers?.[currentStep.id]}
+                previousAnswer={quizAnswers[currentStep.id] ?? savedQuizAnswers?.[currentStep.id]}
               />
             )}
             {currentStep.type === 'scenario' && (
@@ -504,7 +556,7 @@ export function ModuleViewer({
                 step={currentStep}
                 onComplete={handleStepComplete}
                 onAnswer={(correct, idx) => handleAnswer(currentStep.id, correct, idx)}
-                previousAnswer={savedQuizAnswers?.[currentStep.id]}
+                previousAnswer={quizAnswers[currentStep.id] ?? savedQuizAnswers?.[currentStep.id]}
               />
             )}
             {currentStep.type === 'dashboard-preview' && (
