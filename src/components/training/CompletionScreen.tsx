@@ -1,8 +1,13 @@
-import { CheckCircle } from '@phosphor-icons/react';
+import { BookOpenText, CheckCircle } from '@phosphor-icons/react';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-export function CompletionScreen() {
+interface CompletionScreenProps {
+  onReviewModules?: () => void;
+}
+
+export function CompletionScreen({ onReviewModules }: CompletionScreenProps) {
   return (
     <div className='flex min-h-screen items-center justify-center bg-gray-50 px-4'>
       <Card className='max-w-lg text-center'>
@@ -19,12 +24,20 @@ export function CompletionScreen() {
             to start working on TSIP tasks. Head to your dashboard to pick up
             your first task.
           </p>
-          <a
-            href='https://tsip.ai/dashboard'
-            className='mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90'
-          >
-            Go to Dashboard
-          </a>
+          <div className='mt-4 flex flex-col gap-3 sm:flex-row'>
+            <a
+              href='https://tsip.ai/dashboard'
+              className='inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90'
+            >
+              Go to Dashboard
+            </a>
+            {onReviewModules && (
+              <Button variant='outline' size='lg' onClick={onReviewModules}>
+                <BookOpenText className='mr-1.5 size-4' />
+                Review Modules
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

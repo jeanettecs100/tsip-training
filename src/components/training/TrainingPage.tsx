@@ -40,7 +40,7 @@ export function TrainingPage() {
 
   if (view === 'home') {
     if (isAllComplete) {
-      return <CompletionScreen />;
+      return <CompletionScreen onReviewModules={() => setView('modules')} />;
     }
     return <TrainingHome onStartTraining={() => setView('modules')} />;
   }
