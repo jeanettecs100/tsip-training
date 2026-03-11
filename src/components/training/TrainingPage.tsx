@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { EmailGate, getStoredEmail } from './EmailGate';
 import { ExamplesPanel } from './ExamplesPanel';
 import { ModuleViewer } from './ModuleViewer';
 import { useTrainingProgress } from './shared/useTrainingProgress';
@@ -7,7 +8,7 @@ import { getModuleSteps } from './steps';
 import { TrainingHome } from './TrainingHome';
 import { TrainingSidebar } from './TrainingSidebar';
 
-type TrainingView = 'home' | 'modules';
+type TrainingView = 'email' | 'home' | 'modules';
 
 export function TrainingPage() {
   const {
@@ -26,8 +27,14 @@ export function TrainingPage() {
     getQuizAnswers,
   } = useTrainingProgress();
 
-  const [view, setView] = useState<TrainingView>('home');
+  const [view, setView] = useState<TrainingView>(
+    getStoredEmail() ? 'home' : 'email'
+  );
   const [showExamples, setShowExamples] = useState(false);
+
+  if (view === 'email') {
+    return <EmailGate onSubmit={() => setView('home')} />;
+  }
 
   if (view === 'home') {
     return <TrainingHome onStartTraining={() => setView('modules')} />;

@@ -1,9 +1,12 @@
 import { ArrowLeft, ArrowRight, CheckCircle, Circle, Trophy, XCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { submitScoresToSheet } from '@/lib/google-sheets';
 import { cn } from '@/lib/utils';
+
+import { getStoredEmail } from './EmailGate';
 
 import { MODULES as MODULES_CONFIG } from './data/modules-config';
 import { ContentCard } from './shared/ContentCard';
@@ -575,9 +578,7 @@ function AssessmentResultsCard({
   getAllModuleScores,
   onComplete,
 }: AssessmentResultsCardProps) {
-  useEffect(() => {
-    onComplete();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const hasSubmitted = useRef(false);
 
   // Compute module 7 score from local quiz state
   const m7Correct = quizSteps.filter(s => quizResults[s.id] === true).length;
@@ -599,6 +600,31 @@ function AssessmentResultsCard({
   // Compute weighted composite
   const composite = rows.reduce((sum, row) => sum + row.pct * row.weight, 0);
   const compositeRounded = Math.round(composite);
+
+  useEffect(() => {
+    onComplete();
+
+    // Submit scores to Google Sheets (once)
+    if (!hasSubmitted.current) {
+      hasSubmitted.current = true;
+      const email = getStoredEmail();
+      if (email) {
+        submitScoresToSheet({
+          email,
+          compositeScore: compositeRounded,
+          modules: rows.map(r => ({
+            moduleId: r.id,
+            title: r.title,
+            correct: r.correct,
+            total: r.total,
+            percent: Math.round(r.pct),
+            weight: r.weight,
+          })),
+          submittedAt: new Date().toISOString(),
+        });
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Card>
