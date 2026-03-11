@@ -122,7 +122,7 @@ Then for the Cash Flow Schedule, Start with Adjusted EBITDA, walk down to EBIT, 
     ],
   },
   {
-    title: 'LBO Distribution Waterfall & Returns Sensitivity',
+    title: 'LBO Debt Schedule',
     category: 'Leveraged Buyout',
     inputFile: {
       filename: 'Example_5_Input.xlsx',
@@ -132,69 +132,86 @@ Then for the Cash Flow Schedule, Start with Adjusted EBITDA, walk down to EBIT, 
       filename: 'Example_5_Output.xlsx',
       url: '/training/Example_5_Output.xlsx',
     },
-    prompt: `I need to get a better understanding of the range of outcomes on this LBO opportunity we\u2019re looking at - can you help build the Returns Calculation section in the LBO Model tab? It should show a five-year exit bridge covering 2021E through 2025E that presents LTM EBITDA, an Exit Multiple, and then the Total Enterprise Value. Then make a row for Net Debt and get to Equity Value across the timeline. Then show a recap dividend indicator and make a dated equity cash flow matrix which illustrates the expected cash flows over the years. Also display the resulting IRR and MoM for each potential exit year. The equity cash flow matrix should display the initial investment, interim recap distribution where applicable, and exit equity proceeds so each column forms a complete investment case aligned to the listed dates.
+    prompt: `I have the start to my LBO model built with linked historicals, revenue and cost build, projections, a consolidated income statement and balance sheet, a Valuation & Cash Flow tab, and a transaction tab with sources & uses. I need you to please help me out now with building an LBO analysis.
 
-Directly beneath this section, build Sensitivity Tables containing side-by-side IRR and MoM data tables. The sensitivity grids must vary Entry Multiple and Exit Multiples using a centered base case of 10.0x for both. Tie these to the Returns Calculation outputs. Vary both multiples by 1.0x twice above and twice below. Pull any other necessary line item value from the rest of the model.`,
+In a new tab please start by creating a section covering 2024E\u20132028E that shows the Beginning Cash Balance for each year and the FCF for each year by pulling both from the models. Using those figures then calculate Cash Available for Debt Repayment for each year.
+
+After that, I need you to create a debt repayment schedule for the Revolve, the Senior Secured TL, and the Senior Unsecured Notes in three separate sections. The order in paying off the debt figures will go as follows 1) revolver 2) Senior TL 3) Senior Unsecured Notes. You should do the same process in each of the three charts and it goes as follows:
+- Pull the debt figures\u2019 interest rate and beginning balance for 2024E from the model
+- Then, for each year calculate principal repayment based on available cash for repayment, calculate interest expense on the beginning debt balance, and calculate the ending debt figures\u2019 balance
+
+Finally, I need you to do some summary debt calculations as follows for each year:
+- Pull EBITDA from the model
+- Calculate Total Beginning Debt, Beginning Net Debt and Total Interest Expense
+- Find the Leverage ratio and Interest coverage ratio
+
+At this point you will be done with the LBO valuation and the last thing I need you to do is to link interest expense and debt repayment back into the Valuation and Cash Flow tab in the model.
+
+Pull any necessary values or assumptions from the appropriate sections of the model and maintain consistent formatting.`,
     rubric: [
       {
         name: 'Structural Completeness',
         criteria: [
-          { question: 'Does the LBO Model tab include a Returns Calculation block spanning exit years 2021E through 2025E with rows for LTM EBITDA, Exit Multiple, Total Enterprise Value, Less: Net Debt, and Equity Value presented in sequence?', points: 10 },
-          { question: 'Does the section include a Recap Dividend indicator aligned to the projection timeline?', points: 10 },
-          { question: 'Does the section include a dated equity cash flow matrix showing initial investment, interim distributions, and exit proceeds by year?', points: 10 },
-          { question: 'Are IRR and MoM rows presented beneath the equity cash flow matrix for each exit year?', points: 10 },
-          { question: 'Does the tab include an IRR sensitivity table and a MoM sensitivity table positioned beneath the Returns Calculation block?', points: 10 },
-          { question: 'Do both sensitivity tables vary Entry Multiple vertically and Exit Multiple horizontally with a clearly identified base case center?', points: 10 },
+          { question: 'Does the workbook contain a new tab titled "LBO"?', points: 20 },
+          { question: 'Does the LBO tab contain a section for Cash Available for Debt Repayment (2024E\u20132028E)?', points: 15 },
+          { question: 'Does the LBO tab contain a Revolver debt schedule section?', points: 15 },
+          { question: 'Does the LBO tab contain a Senior Secured Term Loan schedule section?', points: 15 },
+          { question: 'Does the LBO tab contain a Senior Unsecured Notes schedule section?', points: 15 },
+          { question: 'Does the LBO tab contain a Leverage Calculations section?', points: 15 },
+          { question: 'Are the debt figures in the Valuation and Cash Flow tab populated?', points: 20 },
         ],
       },
       {
         name: 'Input Data Accuracy',
         criteria: [
-          { question: 'Is the sensitivity base case Entry Multiple hardcoded at 10.0x within the sensitivity driver range?', points: 5 },
-          { question: 'Is the sensitivity base case Exit Multiple hardcoded at 10.0x within the sensitivity driver range?', points: 5 },
-          { question: 'Are the surrounding sensitivity driver ranges constructed symmetrically around the 10.0x base case (e.g., 9.0x\u201311.0x)?', points: 5 },
+          { question: 'Does the projection period include five years labeled 2024E through 2028E?', points: 10 },
         ],
       },
       {
         name: 'Formula Correctness',
         criteria: [
-          { question: 'Does Total Enterprise Value equal LTM EBITDA multiplied by Exit Multiple for each exit year?', points: 15 },
-          { question: 'Does Equity Value equal Enterprise Value less Net Debt for each period?', points: 15 },
-          { question: 'Does the equity cash flow matrix correctly reflect initial investment, recap distributions, and exit proceeds for each scenario?', points: 15 },
-          { question: 'Are IRR calculations derived from the full equity cash flow stream for each exit year rather than partial ranges?', points: 15 },
-          { question: 'Are MoM values calculated from total invested capital versus total realized equity value?', points: 15 },
-          { question: 'Do the IRR and MoM sensitivity tables pull directly from the Returns Calculation outputs rather than recomputing logic locally?', points: 15 },
+          { question: 'Is Cash Available for Debt Repayment calculated as Beginning Cash + FCF for each year?', points: 20 },
+          { question: 'Are principal repayments applied in correct priority order (Revolver \u2192 Term Loan \u2192 Notes)?', points: 20 },
+          { question: 'Is Ending Balance calculated as Beginning Balance minus Principal Repayment?', points: 20 },
+          { question: 'Is Total Beginning Debt calculated as the sum of all debt tranches?', points: 20 },
+          { question: 'Is Total Interest Expense calculated as the sum of interest from all tranches?', points: 20 },
+          { question: 'Are Interest Expense, Revolver repayment, TL repayment, and Notes repayment linked back into the FCF build?', points: 25 },
         ],
       },
       {
         name: 'Dynamic Functionality',
         criteria: [
-          { question: 'When LTM EBITDA changes, do Enterprise Value, Equity Value, IRR, MoM, and both sensitivity tables update automatically?', points: 15 },
-          { question: 'When Exit Multiple assumptions change, do all valuation outputs and sensitivity tables update without manual edits?', points: 15 },
-          { question: 'When Net Debt changes, do Equity Value, IRR, MoM, and sensitivity outputs update automatically?', points: 15 },
-          { question: 'When recap timing or size changes, does the equity cash flow matrix update and flow through to IRR and MoM?', points: 15 },
-          { question: 'When sensitivity driver ranges change, do both sensitivity tables refresh without breaking references?', points: 15 },
+          { question: 'When Free Cash Flow increases in a forecast year, does debt repayment increase and ending balances decrease?', points: 20 },
+          { question: 'When a debt interest rate is changed, does total interest expense update and flow through to coverage ratios?', points: 15 },
+          { question: 'When EBITDA changes in the model, do leverage and interest coverage ratios update automatically?', points: 20 },
+          { question: 'When Beginning Cash is increased in a given year, does Cash Available for Debt Repayment increase and debt balances decrease accordingly?', points: 15 },
+          { question: 'When CapEx is increased in a forecast year (reducing FCF), does cash available for repayment decrease and ending debt balances increase?', points: 15 },
         ],
       },
       {
         name: 'Output Validation',
         criteria: [
-          { question: 'Does 2021E Equity Value equal approximately 3,428 (\u00b150)?', points: 10 },
-          { question: 'Does 2024E Equity Value equal approximately 4,616 (\u00b150)?', points: 10 },
-          { question: 'Does 2025E Equity Value equal approximately 5,691 (\u00b150)?', points: 10 },
-          { question: 'Does IRR decline from roughly 56.9% in the earliest exit to roughly 30.2% in the latest exit (\u00b11.0%)?', points: 10 },
-          { question: 'Does MoM increase from roughly 1.6x in the earliest exit to roughly 3.3x in the latest exit (\u00b10.1x)?', points: 10 },
-          { question: 'Does the IRR sensitivity table show higher IRRs as Exit Multiple increases holding Entry constant?', points: 10 },
+          { question: 'Is 2024E Total Interest Expense = 102.48 (\u00b11%)?', points: 15 },
+          { question: 'Is 2025E Total Beginning Debt = 1,357.64 (\u00b11%)?', points: 15 },
+          { question: 'Is 2026E Leverage Ratio = 2.64x (\u00b11%)?', points: 15 },
+          { question: 'Is 2027E Interest Coverage = 7.00x (\u00b11%)?', points: 15 },
+          { question: 'Is Cash Available for Debt Repayment in 2024E approximately 126.88 (\u00b11%)?', points: 15 },
+          { question: 'Is Senior Secured TL ending balance in 2025E approximately 572.25 (\u00b11%)?', points: 15 },
+          { question: 'Is Senior Unsecured Notes ending balance in 2028E approximately 455.77 (\u00b11%)?', points: 15 },
+          { question: 'Is Leverage ratio in 2024E approximately 4.27x (\u00b11%)?', points: 15 },
+          { question: 'Is Leverage ratio in 2028E approximately 1.30x (\u00b11%)?', points: 15 },
+          { question: 'Is Interest Coverage ratio in 2024E approximately 3.40x (\u00b11%)?', points: 15 },
+          { question: 'Is Revolver Interest Expense in 2024E approximately 1.75 (\u00b11%)?', points: 15 },
+          { question: 'Is Senior Secured TL Principal Repayment in 2025E approximately 124.13 (\u00b11%)?', points: 15 },
+          { question: 'Is Total Beginning Debt in 2025E approximately 1,357.64 (\u00b11%)?', points: 15 },
         ],
       },
       {
         name: 'Model Quality & Pitfalls',
         criteria: [
-          { question: 'Does the workbook contain any Excel error values (#REF!, #N/A, #DIV/0!, #VALUE!, #NAME?, #NUM!)?', points: -10 },
+          { question: 'Does the workbook contain any Excel error values (#REF!, #N/A, #DIV/0!, #VALUE!, #NAME?, #NUM!)?', points: -15 },
           { question: 'Does the workbook contain external links to other workbooks/files?', points: -10 },
-          { question: 'Are any Equity Value, IRR, or MoM outputs hardcoded instead of formula-driven?', points: -15 },
-          { question: 'Are sensitivity tables built with manual formulas rather than Excel data tables?', points: -10 },
-          { question: 'Do IRR calculations break or produce inconsistent signs when recap distributions are toggled?', points: -10 },
+          { question: 'Are any key calculations hardcoded?', points: -15 },
         ],
       },
     ],
