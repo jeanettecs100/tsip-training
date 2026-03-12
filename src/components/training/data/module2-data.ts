@@ -292,10 +292,6 @@ export const module2Steps: Step[] = [
         definition: 'Polished, client-ready appearance with uniform styling across all tabs',
       },
       {
-        term: 'Business Realism',
-        definition: 'Task mirrors a genuine analyst assignment with tangible analytical substance',
-      },
-      {
         term: 'I/O Progression',
         definition: 'Output is the natural next analytical layer built on the input',
       },
