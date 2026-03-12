@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 import { getStoredEmail } from './EmailGate';
 
-import { MODULES as MODULES_CONFIG } from './data/modules-config';
+import { ChecklistExercise } from './shared/ChecklistExercise';
 import { ContentCard } from './shared/ContentCard';
 import { DashboardPreviewCard } from './shared/DashboardPreviewCard';
 import { MatchingExercise } from './shared/MatchingExercise';
@@ -18,7 +18,7 @@ import { OrderingExercise } from './shared/OrderingExercise';
 import { ScenarioQuestion } from './shared/ScenarioQuestion';
 import { StepProgress } from './shared/StepProgress';
 import { TaskFormPreviewCard } from './shared/TaskFormPreviewCard';
-import type { ModuleId, ModuleScore, QuizAnswerMap, Step } from './shared/types';
+import type { ModuleConfig, ModuleId, ModuleScore, QuizAnswerMap, Step } from './shared/types';
 
 interface SidebarItem {
   label: string;
@@ -26,10 +26,10 @@ interface SidebarItem {
   endIndex: number;
 }
 
-const TITLED_STEP_TYPES = new Set(['content', 'dashboard-preview', 'task-form-preview', 'assessment-results']);
+const TITLED_STEP_TYPES = new Set(['content', 'checklist', 'dashboard-preview', 'task-form-preview', 'assessment-results']);
 const QUIZ_STEP_TYPES = new Set(['multiple-choice', 'scenario', 'ordering', 'matching']);
 
-function buildSidebarItems(steps: Step[], moduleId?: ModuleId): SidebarItem[] {
+function buildSidebarItems(steps: Step[], isFinalAssessment?: boolean): SidebarItem[] {
   const items: SidebarItem[] = [];
   let i = 0;
   let questionNum = 0;
@@ -38,8 +38,8 @@ function buildSidebarItems(steps: Step[], moduleId?: ModuleId): SidebarItem[] {
     if (TITLED_STEP_TYPES.has(step.type)) {
       items.push({ label: 'title' in step ? step.title : '', startIndex: i, endIndex: i });
       i++;
-    } else if (moduleId === 7) {
-      // Module 7: each quiz step gets its own sidebar entry
+    } else if (isFinalAssessment) {
+      // Final assessment: each quiz step gets its own sidebar entry
       questionNum++;
       items.push({ label: `Question #${questionNum}`, startIndex: i, endIndex: i });
       i++;
@@ -77,12 +77,23 @@ function getKnowledgeCheckInfo(
   return null;
 }
 
+export interface ModuleWeight {
+  id: ModuleId;
+  title: string;
+  weight: number;
+}
+
 interface ModuleViewerProps {
   moduleId: ModuleId;
+  moduleConfig: ModuleConfig;
   steps: Step[];
   currentStepIndex: number;
   maxStepIndex: number;
   isReviewMode: boolean;
+  isLastModule?: boolean;
+  isFinalAssessment?: boolean;
+  storageKeyPrefix?: string;
+  moduleWeights?: ModuleWeight[];
   onAdvance: (totalSteps: number) => void;
   onBack: () => void;
   onGoToStep: (stepIndex: number, totalSteps: number) => void;
@@ -95,10 +106,15 @@ interface ModuleViewerProps {
 
 export function ModuleViewer({
   moduleId,
+  moduleConfig,
   steps,
   currentStepIndex,
   maxStepIndex,
   isReviewMode,
+  isLastModule: isLastModuleProp,
+  isFinalAssessment: isFinalAssessmentProp,
+  storageKeyPrefix = 'tsip',
+  moduleWeights,
   onAdvance,
   onBack,
   onGoToStep,
@@ -113,11 +129,11 @@ export function ModuleViewer({
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswerMap>({});
   const [showScore, setShowScore] = useState(false);
 
-  const moduleConfig = MODULES_CONFIG.find(m => m.id === moduleId);
   const safeStepIndex = Math.min(currentStepIndex, steps.length - 1);
   const currentStep = steps[safeStepIndex];
   const isLastStep = safeStepIndex === steps.length - 1;
-  const isLastModule = moduleId === 7;
+  const isLastModule = isLastModuleProp ?? (moduleId === 7);
+  const isFinalAssessment = isFinalAssessmentProp ?? (moduleId === 7);
   const isFirstStep = safeStepIndex === 0;
 
   // Initialize from saved answers when entering review mode, or restore in-progress answers from localStorage
@@ -141,8 +157,8 @@ export function ModuleViewer({
     } else {
       // Try to restore in-progress answers from localStorage
       try {
-        const storedAnswers = localStorage.getItem(`tsip-quiz-answers-${moduleId}`);
-        const storedResults = localStorage.getItem(`tsip-quiz-results-${moduleId}`);
+        const storedAnswers = localStorage.getItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
+        const storedResults = localStorage.getItem(`${storageKeyPrefix}-quiz-results-${moduleId}`);
         if (storedAnswers) {
           setQuizAnswers(JSON.parse(storedAnswers) as QuizAnswerMap);
         } else {
@@ -169,20 +185,20 @@ export function ModuleViewer({
     setQuizResults(prev => {
       const next = { ...prev, [stepId]: correct };
       try {
-        localStorage.setItem(`tsip-quiz-results-${moduleId}`, JSON.stringify(next));
+        localStorage.setItem(`${storageKeyPrefix}-quiz-results-${moduleId}`, JSON.stringify(next));
       } catch { /* ignore */ }
       return next;
     });
     setQuizAnswers(prev => {
       const next = { ...prev, [stepId]: answerIndex };
       try {
-        localStorage.setItem(`tsip-quiz-answers-${moduleId}`, JSON.stringify(next));
+        localStorage.setItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`, JSON.stringify(next));
       } catch { /* ignore */ }
       return next;
     });
   }, [moduleId]);
 
-  const sidebarItems = buildSidebarItems(steps, moduleId);
+  const sidebarItems = buildSidebarItems(steps, isFinalAssessment);
 
   // Compute display step index (sidebar items = display steps)
   const displayStepIndex = sidebarItems.findIndex(
@@ -195,8 +211,8 @@ export function ModuleViewer({
   const quizStepIds = quizSteps.map(s => s.id);
 
   const handleAdvance = () => {
-    // Module 7: save scores when advancing to the results step
-    if (moduleId === 7 && !isReviewMode && quizSteps.length > 0) {
+    // Final assessment: save scores when advancing to the results step
+    if (isFinalAssessment && !isReviewMode && quizSteps.length > 0) {
       const nextStep = steps[safeStepIndex + 1];
       if (nextStep?.type === 'assessment-results') {
         const correct = quizStepIds.filter(id => quizResults[id] === true).length;
@@ -204,21 +220,21 @@ export function ModuleViewer({
         onSaveQuizAnswers?.(quizAnswers);
         // Clean up in-progress localStorage keys
         try {
-          localStorage.removeItem(`tsip-quiz-answers-${moduleId}`);
-          localStorage.removeItem(`tsip-quiz-results-${moduleId}`);
+          localStorage.removeItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
+          localStorage.removeItem(`${storageKeyPrefix}-quiz-results-${moduleId}`);
         } catch { /* ignore */ }
       }
     }
 
-    // If on last step and there are quiz questions, show score summary (skip for module 7)
-    if (isLastStep && !isReviewMode && quizSteps.length > 0 && !showScore && moduleId !== 7) {
+    // If on last step and there are quiz questions, show score summary (skip for final assessment)
+    if (isLastStep && !isReviewMode && quizSteps.length > 0 && !showScore && !isFinalAssessment) {
       const correct = quizStepIds.filter(id => quizResults[id] === true).length;
       onModuleComplete?.({ correct, total: quizSteps.length });
       onSaveQuizAnswers?.(quizAnswers);
       // Clean up in-progress localStorage keys
       try {
-        localStorage.removeItem(`tsip-quiz-answers-${moduleId}`);
-        localStorage.removeItem(`tsip-quiz-results-${moduleId}`);
+        localStorage.removeItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
+        localStorage.removeItem(`${storageKeyPrefix}-quiz-results-${moduleId}`);
       } catch { /* ignore */ }
       setShowScore(true);
       return;
@@ -232,8 +248,8 @@ export function ModuleViewer({
       return;
     }
 
-    // Review mode: on last quiz question, go back to score summary (skip for module 7)
-    if (isReviewMode && isLastStep && savedQuizAnswers && moduleId !== 7) {
+    // Review mode: on last quiz question, go back to score summary (skip for final assessment)
+    if (isReviewMode && isLastStep && savedQuizAnswers && !isFinalAssessment) {
       setShowScore(true);
       return;
     }
@@ -260,7 +276,7 @@ export function ModuleViewer({
 
   const kcInfo = getKnowledgeCheckInfo(sidebarItems, safeStepIndex);
 
-  if (!currentStep || !moduleConfig) return null;
+  if (!currentStep) return null;
 
   const isLastStepReview = isReviewMode && isLastStep;
 
@@ -460,8 +476,8 @@ export function ModuleViewer({
               >
                 {isCompleted && !isActive ? (
                   (() => {
-                    // For module 7 quiz questions, show correct/incorrect icon
-                    if (moduleId === 7) {
+                    // For final assessment quiz questions, show correct/incorrect icon
+                    if (isFinalAssessment) {
                       const stepAtIndex = steps[item.startIndex];
                       if (stepAtIndex && QUIZ_STEP_TYPES.has(stepAtIndex.type)) {
                         const wasCorrect = quizResults[stepAtIndex.id];
@@ -527,6 +543,13 @@ export function ModuleViewer({
                 isAlreadyCompleted={isReviewMode || safeStepIndex < maxStepIndex}
               />
             )}
+            {currentStep.type === 'checklist' && (
+              <ChecklistExercise
+                step={currentStep}
+                onComplete={handleStepComplete}
+                isAlreadyCompleted={isReviewMode || safeStepIndex < maxStepIndex}
+              />
+            )}
             {currentStep.type === 'multiple-choice' && (
               <MultipleChoiceQuiz
                 step={currentStep}
@@ -577,6 +600,8 @@ export function ModuleViewer({
                 quizSteps={quizSteps}
                 getAllModuleScores={getAllModuleScores}
                 onComplete={handleStepComplete}
+                moduleWeights={moduleWeights ?? CONTRIBUTOR_MODULE_WEIGHTS}
+                storageKeyPrefix={storageKeyPrefix}
               />
             )}
           </div>
@@ -607,8 +632,8 @@ export function ModuleViewer({
   );
 }
 
-// Module weights for composite score
-const MODULE_WEIGHTS: Array<{ id: ModuleId; title: string; weight: number }> = [
+// Default contributor module weights for composite score
+const CONTRIBUTOR_MODULE_WEIGHTS: ModuleWeight[] = [
   { id: 1, title: 'Introduction', weight: 0.05 },
   { id: 2, title: 'Spreadsheet Tasks', weight: 0.05 },
   { id: 3, title: 'Prompt Writing', weight: 0.05 },
@@ -622,6 +647,8 @@ interface AssessmentResultsCardProps {
   quizSteps: Step[];
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
   onComplete: () => void;
+  moduleWeights: ModuleWeight[];
+  storageKeyPrefix: string;
 }
 
 function AssessmentResultsCard({
@@ -629,6 +656,8 @@ function AssessmentResultsCard({
   quizSteps,
   getAllModuleScores,
   onComplete,
+  moduleWeights,
+  storageKeyPrefix,
 }: AssessmentResultsCardProps) {
   const hasSubmitted = useRef(false);
 
@@ -638,7 +667,7 @@ function AssessmentResultsCard({
   const m7Pct = m7Total > 0 ? (m7Correct / m7Total) * 100 : 0;
 
   // Build per-module rows
-  const rows = MODULE_WEIGHTS.map(({ id, title, weight }) => {
+  const rows = moduleWeights.map(({ id, title, weight }) => {
     if (id === 7) {
       return { id, title, weight, correct: m7Correct, total: m7Total, pct: m7Pct };
     }
@@ -664,6 +693,7 @@ function AssessmentResultsCard({
         submitScoresToSheet({
           email,
           compositeScore: compositeRounded,
+          trainingType: storageKeyPrefix === 'tsip-reviewer' ? 'reviewer' : 'contributor',
           modules: rows.map(r => ({
             moduleId: r.id,
             title: r.title,

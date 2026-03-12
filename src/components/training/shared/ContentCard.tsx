@@ -84,11 +84,12 @@ const COLUMN_STYLE_CLASSES = {
 function renderTable(table: ContentTable) {
   return (
     <div className='overflow-x-auto rounded-lg border'>
-      <table className='w-full text-sm'>
+      <table className={cn('w-full text-sm', table.columnStyles && !table.columnWidths && 'table-fixed')}>
         <thead>
           <tr className='border-b bg-muted/50'>
             {table.headers.map((header, i) => {
               const colStyle = table.columnStyles?.[i];
+              const width = table.columnWidths?.[i];
               return (
                 <th
                   key={i}
@@ -96,6 +97,7 @@ function renderTable(table: ContentTable) {
                     'px-4 py-2.5 text-left font-semibold text-foreground',
                     colStyle && COLUMN_STYLE_CLASSES[colStyle].header
                   )}
+                  style={width ? { width } : undefined}
                 >
                   {header}
                 </th>
@@ -141,7 +143,7 @@ function renderNumberedList(numberedList: NumberedList) {
       <h3 className='text-sm font-semibold text-foreground'>
         {numberedList.title}
       </h3>
-      <ol className='list-decimal space-y-1.5 pl-5'>
+      <ol className='list-decimal space-y-1.5 pl-5' start={numberedList.start}>
         {numberedList.items.map((item, i) => (
           <li key={i} className='text-sm leading-relaxed text-muted-foreground'>
             {item}

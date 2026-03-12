@@ -1,9 +1,12 @@
 export type ModuleId = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
+export type TrainingMode = 'contributor' | 'reviewer';
+
 export type ModuleStatus = 'locked' | 'current' | 'completed';
 
 export type StepType =
   | 'content'
+  | 'checklist'
   | 'multiple-choice'
   | 'matching'
   | 'ordering'
@@ -16,6 +19,7 @@ export interface ContentTable {
   headers: string[];
   rows: string[][];
   columnStyles?: Record<number, 'good' | 'bad'>;
+  columnWidths?: string[];
 }
 
 export interface ContentCallout {
@@ -26,6 +30,7 @@ export interface ContentCallout {
 export interface NumberedList {
   title: string;
   items: string[];
+  start?: number;
 }
 
 export interface ExampleFile {
@@ -120,6 +125,19 @@ export interface TaskFormPreviewStep {
   callout?: ContentCallout;
 }
 
+export interface ChecklistGroup {
+  label: string;
+  items: string[];
+}
+
+export interface ChecklistStep {
+  type: 'checklist';
+  id: string;
+  title: string;
+  body?: string;
+  groups: ChecklistGroup[];
+}
+
 export interface AssessmentResultsStep {
   type: 'assessment-results';
   id: string;
@@ -128,6 +146,7 @@ export interface AssessmentResultsStep {
 
 export type Step =
   | ContentStep
+  | ChecklistStep
   | MultipleChoiceStep
   | MatchingStep
   | OrderingStep

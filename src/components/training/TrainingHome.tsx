@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 interface TrainingHomeProps {
   onStartTraining: () => void;
+  onStartReviewerTraining: () => void;
 }
 
 async function verifyPassword(password: string, training: 'contributor' | 'reviewer'): Promise<boolean> {
@@ -22,7 +23,7 @@ async function verifyPassword(password: string, training: 'contributor' | 'revie
   }
 }
 
-export function TrainingHome({ onStartTraining }: TrainingHomeProps) {
+export function TrainingHome({ onStartTraining, onStartReviewerTraining }: TrainingHomeProps) {
   const [showContributorPrompt, setShowContributorPrompt] = useState(false);
   const [contributorPassword, setContributorPassword] = useState('');
   const [contributorError, setContributorError] = useState(false);
@@ -51,8 +52,7 @@ export function TrainingHome({ onStartTraining }: TrainingHomeProps) {
     const valid = await verifyPassword(reviewerPassword, 'reviewer');
     setReviewerLoading(false);
     if (valid) {
-      // TODO: navigate to reviewer training when available
-      setReviewerError(true);
+      onStartReviewerTraining();
     } else {
       setReviewerError(true);
     }
@@ -142,7 +142,7 @@ export function TrainingHome({ onStartTraining }: TrainingHomeProps) {
                     Reviewer Training
                   </h2>
                   <p className='mt-0.5 text-sm text-muted-foreground'>
-                    Password-protected modules for designated reviewers
+                    7 modules covering evaluation criteria, feedback, workflow, and a final assessment
                   </p>
                 </div>
                 <Lock className='size-5 shrink-0 text-muted-foreground/50' />

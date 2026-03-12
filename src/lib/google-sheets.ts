@@ -14,6 +14,7 @@ interface ModuleScoreRow {
 export interface ScoreSubmission {
   email: string;
   compositeScore: number;
+  trainingType?: 'contributor' | 'reviewer';
   modules: ModuleScoreRow[];
   submittedAt: string;
 }

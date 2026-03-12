@@ -16,8 +16,8 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
-import { MODULES } from './data/modules-config';
-import type { ModuleId, ModuleScore, ModuleStatus } from './shared/types';
+import { MODULES as CONTRIBUTOR_MODULES } from './data/modules-config';
+import type { ModuleConfig, ModuleId, ModuleScore, ModuleStatus } from './shared/types';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   RocketLaunch,
@@ -30,13 +30,15 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 interface TrainingSidebarProps {
+  modules?: ModuleConfig[];
+  title?: string;
   getModuleStatus: (id: ModuleId) => ModuleStatus;
   getModuleScore: (id: ModuleId) => ModuleScore | undefined;
   currentModule: ModuleId;
   viewingModule: ModuleId;
   completedCount: number;
   onModuleClick: (id: ModuleId) => void;
-  onShowExamples: () => void;
+  onShowExamples?: () => void;
   onGoHome: () => void;
 }
 
@@ -51,6 +53,8 @@ function StatusIcon({ status }: { status: ModuleStatus }) {
 }
 
 export function TrainingSidebar({
+  modules = CONTRIBUTOR_MODULES,
+  title = 'TSIP Training',
   getModuleStatus,
   getModuleScore,
   viewingModule,
@@ -59,6 +63,7 @@ export function TrainingSidebar({
   onShowExamples,
   onGoHome,
 }: TrainingSidebarProps) {
+  const totalModules = modules.length;
   return (
     <>
       {/* Desktop sidebar */}
@@ -71,19 +76,19 @@ export function TrainingSidebar({
             <ArrowLeft className='size-3.5' />
             <span>Back to home</span>
           </button>
-          <h2 className='text-lg font-bold text-foreground'>TSIP Training</h2>
+          <h2 className='text-lg font-bold text-foreground'>{title}</h2>
           <p className='mt-1 text-sm text-muted-foreground'>
-            {completedCount} of 7 modules complete
+            {completedCount} of {totalModules} modules complete
           </p>
           <Progress
             value={completedCount}
-            max={7}
+            max={totalModules}
             className='mt-3'
           />
         </div>
 
         <nav className='flex-1 overflow-y-auto py-2'>
-          {MODULES.map(mod => {
+          {modules.map(mod => {
             const status = getModuleStatus(mod.id);
             const score = getModuleScore(mod.id);
             const isViewing = mod.id === viewingModule;
@@ -141,16 +146,18 @@ export function TrainingSidebar({
           })}
         </nav>
 
-        {/* Examples button — always accessible */}
-        <div className='border-t px-4 py-3'>
-          <button
-            onClick={onShowExamples}
-            className='flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5'
-          >
-            <BookOpen className='size-5' />
-            <span>View Examples</span>
-          </button>
-        </div>
+        {/* Examples button — only for contributor training */}
+        {onShowExamples && (
+          <div className='border-t px-4 py-3'>
+            <button
+              onClick={onShowExamples}
+              className='flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5'
+            >
+              <BookOpen className='size-5' />
+              <span>View Examples</span>
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Mobile module bar */}
@@ -161,7 +168,7 @@ export function TrainingSidebar({
         >
           <ArrowLeft className='size-3' />
         </button>
-        {MODULES.map(mod => {
+        {modules.map(mod => {
           const status = getModuleStatus(mod.id);
           const score = getModuleScore(mod.id);
           const isViewing = mod.id === viewingModule;
@@ -195,13 +202,15 @@ export function TrainingSidebar({
             </button>
           );
         })}
-        <button
-          onClick={onShowExamples}
-          className='flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors'
-        >
-          <BookOpen className='size-3.5' />
-          <span>Examples</span>
-        </button>
+        {onShowExamples && (
+          <button
+            onClick={onShowExamples}
+            className='flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors'
+          >
+            <BookOpen className='size-3.5' />
+            <span>Examples</span>
+          </button>
+        )}
       </div>
     </>
   );
