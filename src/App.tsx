@@ -1,9 +1,20 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import { Toaster } from '@/components/ui/sonner';
+import { CompletionScreen } from '@/components/training/CompletionScreen';
 import { ContributorTraining } from '@/components/training/ContributorTraining';
 import { HomePage } from '@/components/training/HomePage';
 import { ReviewerTraining } from '@/components/training/ReviewerTraining';
+
+function ContributorComplete() {
+  const navigate = useNavigate();
+  return <CompletionScreen onReviewModules={() => navigate('/contributor')} />;
+}
+
+function ReviewerComplete() {
+  const navigate = useNavigate();
+  return <CompletionScreen onReviewModules={() => navigate('/reviewer')} />;
+}
 
 export function App() {
   return (
@@ -12,7 +23,9 @@ export function App() {
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/contributor' element={<ContributorTraining />} />
+        <Route path='/contributor/complete' element={<ContributorComplete />} />
         <Route path='/reviewer' element={<ReviewerTraining />} />
+        <Route path='/reviewer/complete' element={<ReviewerComplete />} />
       </Routes>
     </>
   );

@@ -46,7 +46,7 @@ export function ContributorTraining() {
           savedQuizAnswers={contributor.getQuizAnswers(contributor.viewingModule)}
           onSaveQuizAnswers={(answers) => contributor.saveQuizAnswers(contributor.viewingModule, answers)}
           getAllModuleScores={contributor.getModuleScore}
-          onTrainingComplete={() => navigate('/')}
+          onTrainingComplete={() => navigate('/contributor/complete')}
           onRetakeAssessment={() => contributor.resetCurrentModule()}
         />
       </main>
