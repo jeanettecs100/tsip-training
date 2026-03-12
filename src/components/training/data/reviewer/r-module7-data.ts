@@ -63,12 +63,12 @@ export const reviewerModule7Steps: Step[] = [
       'You open a submitted task and download the input workbook. The task area already contains partially filled-in formulas, and one of the data tabs references cells on the task tab.',
     question: 'What is the correct course of action?',
     options: [
-      'Approve the task — the partial formulas give the AI a helpful starting point',
       'Mark the relevant checklist items as No — the task area must be blank in the input workbook and inter-tab dependencies are not allowed',
+      'Approve the task — the partial formulas give the AI a helpful starting point',
       'Mark it as Yes but leave a note about the issue',
       'Only flag the inter-tab dependency; partially filled task areas are acceptable',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'Two issues are present: (1) the task area must be blank in the input workbook so the AI starts from scratch, and (2) inter-tab dependencies are not allowed. Both require marking the relevant checklist items as No with specific feedback.',
   },
@@ -108,11 +108,11 @@ export const reviewerModule7Steps: Step[] = [
     question: 'How would you mark Data Integrity and Formula Quality?',
     options: [
       'Both Yes — all formulas work correctly',
-      'Data Integrity: Yes, Formula Quality: No — formulas resolve but hardcoded values make the model difficult to audit',
       'Both No — hardcoded values are always an error',
       'Data Integrity: No, Formula Quality: Yes — the hardcoded values create integrity issues',
+      'Data Integrity: Yes, Formula Quality: No — formulas resolve but hardcoded values make the model difficult to audit',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       'Data Integrity checks for error values, broken references, and external links — since all formulas resolve, this passes. Formula Quality checks for dynamic, auditable formulas with separated assumptions — hardcoded values in formulas fail this item. These are independent checklist items.',
   },
@@ -122,12 +122,12 @@ export const reviewerModule7Steps: Step[] = [
     question:
       'A prompt includes: "In cell B12, type the formula =B10*(1+B11) to calculate projected revenue." Which checklist item does this fail?',
     options: [
-      'Context & Analytical Objective — the prompt lacks context',
       'Structure & Logic — the prompt overspecifies by dictating the exact formula and cell location',
+      'Context & Analytical Objective — the prompt lacks context',
       'Assumptions & Input Data — the prompt should not reference specific cells',
       'Prompt Style — the language is too technical',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'This fails Structure & Logic because it overspecifies — dictating exact cell references and formulas reduces the task to data entry rather than testing analytical ability. A good prompt describes what needs to be accomplished without dictating implementation details.',
   },
@@ -222,11 +222,11 @@ export const reviewerModule7Steps: Step[] = [
       'All spreadsheet and prompt checklist items are marked Yes, but one rubric checklist item (Self-Contained) is marked No. What is the correct decision?',
     options: [
       'Approve — only one item failed',
-      'Request changes — any checklist item marked No means the task needs revision',
       'Approve but note the issue',
       'Request changes on the rubric only',
+      'Request changes — any checklist item marked No means the task needs revision',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       'The checklist is deterministic: any item marked No means the task must be sent back for revision. There is no exception for "only one item" or "the rest are strong." The contributor will see exactly which item failed and your feedback.',
   },
@@ -238,11 +238,11 @@ export const reviewerModule7Steps: Step[] = [
     question: 'What is the core issue and what would you mark No?',
     options: [
       'The prompt is fine; remove the interest rate criterion from the rubric',
-      'The rubric fails Self-Contained — it references information that is neither in the prompt nor specified within the criterion itself. The prompt also fails Assumptions & Input Data — it does not provide the interest rate.',
       'The prompt is underspecified — it must always provide exact values for every assumption',
       'Both components are fine — the AI should infer the interest rate from market context',
+      'The rubric fails Self-Contained — it references information that is neither in the prompt nor specified within the criterion itself. The prompt also fails Assumptions & Input Data — it does not provide the interest rate.',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       'Two checklist items fail: the rubric fails Self-Contained because it references "the interest rate provided in the prompt" but no rate is actually provided, and the prompt fails Assumptions & Input Data because it asks for a debt schedule without specifying the interest rate. Both need to be marked No with specific feedback.',
   },

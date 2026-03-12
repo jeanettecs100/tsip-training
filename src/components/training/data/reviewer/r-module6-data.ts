@@ -186,12 +186,12 @@ export const reviewerModule6Steps: Step[] = [
       'You are reviewing a task where the prompt is well-written and realistic, the deliverable is functional, and the rubric has strong coverage, appropriate weighting, and specific criteria. However, three rubric criteria use the phrase "as specified in the prompt" without restating the expected values. You have marked Self-Contained as No.',
     question: 'What should you do?',
     options: [
-      'Override your No and mark it Yes — the overall quality is too high to reject',
       'Submit the review with Self-Contained marked No and provide feedback explaining which three criteria need to restate the expected values from the prompt',
+      'Override your No and mark it Yes — the overall quality is too high to reject',
       'Mark it Yes but leave a note for future improvement',
       'Rewrite the three criteria yourself and mark it Yes',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'The checklist is deterministic. Self-containment violations mean the rubric cannot be scored objectively by different reviewers. Submit the review with Self-Contained marked No and provide specific feedback identifying which three criteria need to be rewritten to include the actual expected values. The contributor will see exactly what failed and can fix it in one revision round.',
   },

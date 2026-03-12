@@ -230,19 +230,19 @@ export const module2Steps: Step[] = [
       rows: [
         [
           'Data Integrity',
-          'Every formula computes without error values, orphaned references, or reliance on external links',
+          'Every formula computes without error values, reliance on external links, or data vendor formulas',
           'All references intact; balance sheets reconcile; no #REF or #N/A errors anywhere in the workbook',
           'Widespread error values; broken external links; cells referencing deleted tabs',
         ],
         [
           'Formula Quality',
-          'Calculations are dynamic with assumptions broken out into dedicated, labeled cells',
+          'Calculations are dynamic and auditable with assumptions broken out into dedicated, labeled cells',
           'Terminal growth rate sits in a named cell in an inputs section; DCF formula references that cell',
           'Growth rate typed as a raw number inside a formula, e.g. =C10*(1+0.03)',
         ],
         [
           'Formatting & Presentation',
-          'Polished, client-ready appearance with consistent number formats, fonts, and alignment',
+          'Polished, client-ready appearance with visual hierarchy and consistent formatting',
           'Uniform styling; consistent number formats; well-defined section headings; professional color scheme',
           'Raw data dump with scratch calculations visible; inconsistent fonts and number formats across tabs',
         ],
@@ -304,11 +304,11 @@ export const module2Steps: Step[] = [
       'You receive a seed workbook containing a fully built-out LBO model with a complete debt schedule, financial statements, and returns analysis. All tabs are interconnected with dynamic formulas.',
     question: 'Which strategy should you default to for creating the input/output pair?',
     options: [
-      'Build Forward — add a new section of analysis onto the seed',
       'Work Backward — strip a downstream section from the seed to create the input, then build it back as the output',
+      'Build Forward — add a new section of analysis onto the seed',
       'Create Error — introduce meaningful errors into the seed',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'When the seed is already a complete, polished model, the default strategy is Work Backward. You would strip a downstream section (e.g., the returns analysis) to create the input, then make sure that section is included in the output.',
   },
@@ -319,12 +319,25 @@ export const module2Steps: Step[] = [
       'You are using the Work Backward strategy and need to strip a section from the seed. What must you do first?',
     options: [
       'Delete the rows and columns containing the section to keep the model clean',
-      'Audit to find the most downstream section, then remove or hardcode dependencies like linked formulas and cross-references',
       'Copy the entire workbook as a backup before making any changes',
       'Run the model through an error-checking tool',
+      'Audit to find the most downstream section, then remove or hardcode dependencies like linked formulas and cross-references',
+    ],
+    correctIndex: 3,
+    explanation:
+      'The two mandatory process checks are: (1) Audit the spreadsheet to determine which sections are most downstream and should be removed first, and (2) Trace dependencies and Ctrl+F the tab name on every other tab to find and delete any references to the removed section. If the remaining model could have realistically had placeholder assumptions, you may use hardcoded values to resolve errors.',
+  },
+  {
+    type: 'multiple-choice',
+    id: 'm2-quiz-sensitivity',
+    question:
+      'Is adding a sensitivity table a sufficiently complex task?',
+    options: [
+      'Yes',
+      'No',
     ],
     correctIndex: 1,
     explanation:
-      'The two mandatory process checks are: (1) Audit the spreadsheet to determine which sections are most downstream and should be removed first, and (2) Trace dependencies and Ctrl+F the tab name on every other tab to find and delete any references to the removed section. If the remaining model could have realistically had placeholder assumptions, you may use hardcoded values to resolve errors.',
+      'No. A standalone sensitivity table is not complex enough to represent approximately one hour of skilled associate work. Sensitivity tables are typically quick to build and lack the multi-step analytical substance that TSIP tasks require. A valid task should involve building or modifying a meaningful section of analysis — such as a full DCF, debt schedule, or returns waterfall — that demands genuine financial modeling expertise.',
   },
 ];

@@ -90,12 +90,12 @@ export const module1Steps: Step[] = [
     id: 'm1-quiz-purpose',
     question: 'What is the primary purpose of TSIP?',
     options: [
-      'To streamline day-to-day investment banking operations',
       'To produce expert-grade training data that helps AI learn difficult financial tasks',
+      'To streamline day-to-day investment banking operations',
       'To benchmark how well current AI tools perform on finance problems',
       'To connect freelance finance professionals with project-based work',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'TSIP is built to generate training data. The expert-level challenges you create teach AI models how to tackle sophisticated financial work that is beyond their current reach.',
   },

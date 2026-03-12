@@ -323,7 +323,7 @@ export const module4Steps: Step[] = [
         ],
         [
           'Single-Check Principle',
-          'One criterion evaluates one discrete item — never bundles multiple checks together',
+          'One criterion evaluates one discrete item — no bundled checks',
           '"Does the Revenue Build tab exist? [+10]" and separately "Do segment totals tie to the Financials tab? [+15]"',
           '"Does the Revenue Build tab exist with correct segment totals that tie to Financials and update dynamically? [+25]"',
         ],
@@ -341,7 +341,7 @@ export const module4Steps: Step[] = [
         ],
         [
           'Specificity & Testability',
-          'References concrete values, defined ranges, or directly observable conditions with tolerance bands',
+          'References directly observable conditions and specific values with tolerance bands',
           '"If base case assumptions flow through, is the IRR 11.2% (\u00b10.5%)? [+20]"',
           '"Is the revenue $200? [+5]" (missing year, missing tolerance)',
         ],

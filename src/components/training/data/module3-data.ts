@@ -136,19 +136,19 @@ export const module3Steps: Step[] = [
       rows: [
         [
           'Context & Analytical Objective',
-          'Whether the reader can identify what business decision or analysis the model underpins and why it is important',
+          'Whether the reader can identify the purpose of the analysis and the decision or question it supports',
           '"Our PE fund is looking at a bolt-on in the specialty chemicals sector — the target generates roughly $20M of run-rate EBITDA and we need to pressure-test returns under multiple leverage scenarios..."',
           '"Build a leveraged buyout model using the assumptions below..."',
         ],
         [
           'Assumptions & Input Data',
-          'Whether every required data point is explicitly supplied — zero guesswork for the builder',
+          'Whether every input value required to build the desired output is explicitly provided',
           'All hardcoded figures explicitly stated: discount rate, growth assumptions, exit multiple, tax rate, and every other input needed to complete the model',
           'Minimal data provided; omits critical parameters like the discount rate or exit multiple, forcing the builder to make ad-hoc choices',
         ],
         [
           'Output Specification',
-          'Whether every expected output is enumerated with exact definitions, units, and formatting requirements',
+          'Whether every expected output is clear and accompanied by any definitions or logic that may be needed if it is a complex or domain-specific output',
           '"Add a data table showing implied enterprise value across discount rates from 7% to 11% in half-point steps and perpetuity growth rates from 1.5% to 3.5% in half-point steps"',
           '"Show how the valuation moves when you change the key drivers"',
         ],
@@ -160,7 +160,7 @@ export const module3Steps: Step[] = [
         ],
         [
           'Prompt Style',
-          'How clearly and naturally the language reads — should feel like an authentic assignment from a senior banker',
+          'How clearly and naturally the language reads — should feel like an authentic human conversation',
           'Straightforward, professional language with a natural cadence; no machine-generated patterns; reads like a real assignment',
           'Robotic or machine-generated phrasing; relies on meta-instructions like "Populate cells A1 through G20..."',
         ],
@@ -202,10 +202,10 @@ export const module3Steps: Step[] = [
     question:
       'Your output spreadsheet calculates an IRR of 18.3%. Should you include this value in your prompt?',
     options: [
-      'Yes — the LLM needs to know the expected answer',
       'No — calculated values should not appear in the prompt; only include input assumptions',
+      'Yes — the LLM needs to know the expected answer',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
       'If a number is calculated in the output spreadsheet, it should not appear in the prompt. The prompt should only include input assumptions and data. Providing calculated values gives the LLM hints about the desired output.',
   },

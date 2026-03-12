@@ -89,10 +89,10 @@ export const module5Steps: Step[] = [
     question: 'What should you do next?',
     options: [
       'Abandon this task and start a fresh one — the fixes are not worth the effort',
-      'Act on the reviewer\u2019s feedback: separate the bundled criteria into individual items and incorporate the missing assumptions, then resubmit',
       'Respond to the reviewer to justify why your original approach is correct',
+      'Act on the reviewer\u2019s feedback: separate the bundled criteria into individual items and incorporate the missing assumptions, then resubmit',
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
       'When revisions are requested, you should resolve every issue the reviewer identified. Split bundled criteria into standalone atomic checks and add the omitted input assumptions to your prompt, then resubmit the updated work.',
   },

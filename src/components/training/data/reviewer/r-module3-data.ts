@@ -151,11 +151,11 @@ export const reviewerModule3Steps: Step[] = [
     question: 'How would you mark the Formula Quality checklist item?',
     options: [
       'Yes — all formulas resolve correctly and the output is reasonable',
-      'No — hardcoded values are embedded in formulas with no separation of assumptions, making the model difficult to audit',
       'Yes — the hardcoded values are minor since the overall model works',
       'No — the output is unreasonable',
+      'No — hardcoded values are embedded in formulas with no separation of assumptions, making the model difficult to audit',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation: 'This is a clear No on Formula Quality. Multiple key assumptions (discount rate, cost of equity, cost of debt) are hardcoded directly inside formulas rather than referenced from labeled input cells. This makes the model difficult to audit — you cannot easily trace or change assumptions. The fact that formulas resolve without errors is checked by Data Integrity, not Formula Quality.',
   },
   {
@@ -178,12 +178,12 @@ export const reviewerModule3Steps: Step[] = [
     scenario: 'You are reviewing a task where the input workbook contains a basic operating model with revenue and expense projections. The output workbook adds a returns sensitivity analysis showing IRR across various entry multiples and leverage ratios. However, the operating model has no transaction structure — there is no purchase price, no sources and uses, and no debt schedule. The sensitivity analysis references a transaction tab that does not exist.',
     question: 'How would you mark Input-to-Output?',
     options: [
-      'Yes — the sensitivity analysis is a valuable analytical addition',
       'No — the output skips logical prerequisite steps (the transaction structure must be built before a returns sensitivity analysis can work)',
+      'Yes — the sensitivity analysis is a valuable analytical addition',
       'Yes — the intent is clear even if there are minor structural issues',
       'No — the sensitivity analysis is not a useful output',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: 'This is No on Input-to-Output. A returns sensitivity analysis requires prerequisite steps that have not been built — specifically the transaction structure (purchase price, sources and uses, debt schedule). The output skips a logical prerequisite step, and the sensitivity analysis references a tab that does not exist. The intent may be clear, but the execution breaks the logical chain.',
   },
   {
@@ -191,12 +191,12 @@ export const reviewerModule3Steps: Step[] = [
     id: 'r3-quiz-error-values',
     question: 'A spreadsheet has no critical errors (#REF, #DIV/0) but shows a few #N/A values in cells that are part of a VLOOKUP reference table used for optional commentary fields. How would you mark Data Integrity?',
     options: [
-      'Yes — the errors are in non-essential cells and do not affect calculations',
       'No — any error values (#N/A included) mean the spreadsheet fails Data Integrity',
+      'Yes — the errors are in non-essential cells and do not affect calculations',
       'Yes — #N/A errors are not real errors',
       'No — but only because VLOOKUP should be replaced with INDEX/MATCH',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: '#N/A values are error values. The Data Integrity checklist item is binary: any error values present means the item is marked No. It does not matter whether they are in essential or non-essential cells — the standard is zero error values. The contributor should fix the VLOOKUP to handle missing values (e.g., with IFERROR) before the task can pass.',
   },
 ];

@@ -271,12 +271,12 @@ export const reviewerModule5Steps: Step[] = [
     scenario: 'A rubric contains the following criterion: "Are all input assumptions entered correctly as specified in the prompt? [+15]"',
     question: 'Which checklist item does this criterion fail?',
     options: [
-      'Binary Clarity — the criterion is subjective',
       'Self-Contained — it requires reading the prompt to know what values to check',
+      'Binary Clarity — the criterion is subjective',
       'Category Coverage — it does not fit into any standard category',
       'Weighting & Scoring — 15 points is too many for input checks',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: 'This criterion says "as specified in the prompt" without restating the actual input assumptions. A reviewer would need to leave the rubric, read the prompt, identify the assumptions, and then check the spreadsheet. It should be rewritten to list each expected input value explicitly, e.g., "Is the revenue growth rate set to 5%? [+5]".',
   },
   {
@@ -285,11 +285,11 @@ export const reviewerModule5Steps: Step[] = [
     question: 'A rubric assigns +10 points to every criterion, whether it tests tab existence, a complex IRR calculation, or correct formatting. How would you mark Weighting & Scoring?',
     options: [
       'Yes — points are assigned consistently',
-      'No — flat weighting where all items are worth the same regardless of complexity or importance fails the checklist item',
       'Yes — as long as the total points add up correctly',
       'No — but only because the total point count is wrong',
+      'No — flat weighting where all items are worth the same regardless of complexity or importance fails the checklist item',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation: 'Flat weighting where every criterion is worth the same amount regardless of complexity or importance fails the Weighting & Scoring checklist item. Points must differentiate: complex calculations should be weighted higher than structural/formatting checks, and negative points should penalize errors.',
   },
   {

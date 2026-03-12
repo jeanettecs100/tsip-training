@@ -83,7 +83,7 @@ export const reviewerModule2Steps: Step[] = [
             'Download the input and output workbooks — verify the task area is blank or deleted in the input, and populated with the completed analysis in the output',
             'Check the input workbook for proper dependency handling — downstream outputs of the removed task section should either be deleted or replaced with hardcoded placeholder values, if appropriate',
             'Review any auto-check flags on the submission and determine whether they must be resolved',
-            'Go through the 5 spreadsheet checklist items and mark each one according to your review; if a criteria is not met, provide written feedback',
+            'Go through the 4 spreadsheet checklist items and mark each one according to your review; if a criteria is not met, provide written feedback',
           ],
         },
         callout: {
@@ -142,7 +142,7 @@ export const reviewerModule2Steps: Step[] = [
       'Download the input and output workbooks and verify the task area is blank in the input and populated in the output',
       'Check the input workbook for proper dependency handling',
       'Review auto-check flags and determine whether they must be resolved',
-      'Go through the 5 spreadsheet checklist items and provide feedback for any that are not met',
+      'Go through the 4 spreadsheet checklist items and provide feedback for any that are not met',
       'Open the prompt side-by-side with the output workbook',
       'Review auto-check flags for AI-detection patterns',
       'Go through the 5 prompt checklist items and provide feedback for any that are not met',
@@ -170,12 +170,12 @@ export const reviewerModule2Steps: Step[] = [
     id: 'r2-quiz-checklist-logic',
     question: 'A task has all spreadsheet checklist items, all prompt checklist items, but one rubric checklist item (Self-Contained) is not satisfied. What is the correct decision?',
     options: [
-      'Approve the task — only one item failed and the rest are strong',
       'Request changes — any checklist item marked No means the task needs revision',
+      'Approve the task — only one item failed and the rest are strong',
       'Approve the task but note the issue for the contributor to fix next time',
       'Request changes on the rubric only and approve the spreadsheet and prompt',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: 'The checklist is deterministic: if any item is marked No, the task must be sent back for revision. There is no exception for "only one item" or "the rest are strong." The contributor will see exactly which item failed (Self-Contained) and your feedback explaining why, so they can fix it and resubmit.',
   },
 ];

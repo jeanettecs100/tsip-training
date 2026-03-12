@@ -227,11 +227,11 @@ export const reviewerModule4Steps: Step[] = [
     question: 'How would you mark Context & Analytical Objective?',
     options: [
       'Yes — the prompt clearly describes what to build',
-      'No — the prompt tells the reader what to build but not why; there is no business context, decision, or purpose',
       'Yes — the prompt mentions Company X which provides context',
       'No — the prompt is too short',
+      'No — the prompt tells the reader what to build but not why; there is no business context, decision, or purpose',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation: 'This prompt describes what to build (a three-statement model) but gives no indication of why. There is no mention of a transaction, investment decision, or business scenario. The reader must infer the purpose entirely. Context & Analytical Objective requires that the prompt explain the business reason behind the analysis.',
   },
   {
@@ -240,12 +240,12 @@ export const reviewerModule4Steps: Step[] = [
     scenario: 'A prompt includes: "Build a revenue build tab. Row 1 should be Units Sold. Row 2 should be Price Per Unit (=Units Sold * Average Selling Price). Row 3 should be Total Revenue (=SUM of Row 2 across all segments). Use the formula =VLOOKUP to pull historical pricing from the Data tab."',
     question: 'How would you mark Structure & Logic?',
     options: [
-      'Yes — the prompt provides detailed structural guidance',
       'No — the prompt overspecifies formula logic, dictating exact row positions, formulas, and functions, reducing the task to data entry',
+      'Yes — the prompt provides detailed structural guidance',
       'Yes — specifying formulas ensures consistency',
       'No — the prompt is too long',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: 'This prompt overspecifies by dictating exact row positions, specific formulas (=SUM, =VLOOKUP), and cell references. This reduces the task to data entry rather than testing whether the model builder can structure the analysis themselves. Structure & Logic should describe the layout and flow without dictating implementation details.',
   },
   {
@@ -254,11 +254,11 @@ export const reviewerModule4Steps: Step[] = [
     question: 'Which of the following is the strongest indicator that a prompt is LLM-generated?',
     options: [
       'The prompt uses industry-specific jargon and abbreviations',
-      'The prompt includes a bulleted list titled "Input fields required" followed by structured key-value pairs',
       'The prompt references a specific company and transaction context',
       'The prompt uses casual language like "hey, can you throw together a quick model"',
+      'The prompt includes a bulleted list titled "Input fields required" followed by structured key-value pairs',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation: 'Structured lists titled "Input fields required" with key-value formatting are a hallmark of LLM-generated prompts. Real analysts communicate in natural prose with conversational context. Industry jargon, specific company references, and casual tone are all indicators of authentic human writing.',
   },
   {
@@ -266,12 +266,12 @@ export const reviewerModule4Steps: Step[] = [
     id: 'r4-quiz-assumptions',
     question: 'A prompt asks the model builder to "add a DCF analysis" but does not specify the discount rate, terminal growth rate, or projection period. How would you mark Assumptions & Input Data?',
     options: [
-      'Yes — the general task is defined which is sufficient',
       'No — the discount rate, terminal growth rate, and projection period are fundamental inputs for a DCF; without them the model builder would need to guess',
+      'Yes — the general task is defined which is sufficient',
       'Yes — these are standard assumptions that any analyst would know',
       'No — but only because the prompt does not mention which company',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation: 'The discount rate, terminal growth rate, and projection period are fundamental inputs for a DCF. Without them, the model builder must guess, creating ambiguity in both the output and the rubric. Assumptions & Input Data requires that all values needed to build the model are explicitly provided.',
   },
 ];

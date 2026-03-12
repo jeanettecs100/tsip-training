@@ -19,8 +19,8 @@ export const module7Steps: Step[] = [
     scenario:
       'A seed workbook contains a single-tab operating model with historical financials and a revenue forecast, but no valuation work. The model is clean but simple.',
     question: 'Which task creation strategy is most appropriate?',
-    options: ['Work Backward', 'Build Forward', 'Create Error'],
-    correctIndex: 1,
+    options: ['Build Forward', 'Work Backward', 'Create Error'],
+    correctIndex: 0,
     explanation:
       'The model is simple with no downstream sections to strip, which is the textbook Build Forward signal. Work Backward requires a complete model with removable sections. Build Forward fits because you would add a valuation layer as the natural next analytical step.',
   },
@@ -32,8 +32,8 @@ export const module7Steps: Step[] = [
     scenario:
       'You\u2019re using Work Backward on a seed with a DCF tab that references WACC from a separate assumptions tab. You decide to remove the DCF tab to create the input. After deleting it, you notice the assumptions tab still looks fine.',
     question: 'Is the input spreadsheet ready to use as-is?',
-    options: ['Yes', 'No'],
-    correctIndex: 1,
+    options: ['No', 'Yes'],
+    correctIndex: 0,
     explanation:
       'Removing a tab isn\u2019t just about that tab\u2019s own references. Other tabs may reference outputs from the deleted DCF tab (e.g., implied share price feeding into a summary). You must check for cross-references in both directions and clean up any orphaned links before the input is usable.',
   },
@@ -143,11 +143,11 @@ export const module7Steps: Step[] = [
     question: 'What\u2019s wrong with this prompt?',
     options: [
       'Nothing',
-      'It reveals the root cause instead of describing symptoms',
       'It\u2019s too short',
       'It references a specific tab name',
+      'It reveals the root cause instead of describing symptoms',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       'Create Error prompts should describe observable symptoms (\u201Cmy MOIC seems unusually low\u201D) without diagnosing the underlying problem. This mirrors how an analyst actually asks for help. Revealing the exact error (inverted formula) eliminates the analytical reasoning the task is meant to test.',
   },
@@ -232,11 +232,11 @@ export const module7Steps: Step[] = [
     question: 'What should you do?',
     options: [
       'Fix only the bundled criteria and explain your reasoning on the IRR issue',
-      'Fix both issues',
       'Resubmit without changes and ask the reviewer to reconsider',
       'Start a new task',
+      'Fix both issues',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     explanation:
       'Both pieces of feedback reflect established TSIP rules: the single-check principle prohibits bundled criteria, and prompts must never include calculated values. When revisions are requested, you should resolve every noted issue \u2014 personal disagreement doesn\u2019t override the platform\u2019s quality standards.',
   },
