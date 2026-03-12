@@ -206,6 +206,22 @@ export function useTrainingProgress() {
     [progress]
   );
 
+  const resetCurrentModule = useCallback(() => {
+    updateProgress(prev => {
+      const newScores = { ...prev.moduleScores };
+      delete newScores[prev.currentModule];
+      const newAnswers = { ...prev.moduleQuizAnswers };
+      delete newAnswers[prev.currentModule];
+      return {
+        ...prev,
+        currentStepIndex: 0,
+        moduleScores: newScores,
+        moduleQuizAnswers: newAnswers,
+      };
+    });
+    setViewingStepIndex(0);
+  }, [updateProgress]);
+
   const isAllComplete = progress.completedModules.length === 7;
 
   return {
@@ -222,6 +238,7 @@ export function useTrainingProgress() {
     saveModuleScore,
     saveQuizAnswers,
     getQuizAnswers,
+    resetCurrentModule,
     isAllComplete,
   };
 }

@@ -1,5 +1,5 @@
-import { ArrowLeft, ArrowRight, CheckCircle, Circle, Trophy, XCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, CheckCircle, Circle, Trophy, WarningCircle, XCircle } from '@phosphor-icons/react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -102,6 +102,7 @@ interface ModuleViewerProps {
   onSaveQuizAnswers?: (answers: QuizAnswerMap) => void;
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
   onTrainingComplete?: () => void;
+  onRetakeAssessment?: () => void;
 }
 
 export function ModuleViewer({
@@ -123,11 +124,19 @@ export function ModuleViewer({
   onSaveQuizAnswers,
   getAllModuleScores,
   onTrainingComplete,
+  onRetakeAssessment,
 }: ModuleViewerProps) {
   const [stepComplete, setStepComplete] = useState(false);
   const [quizResults, setQuizResults] = useState<Record<string, boolean>>({});
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswerMap>({});
   const [showScore, setShowScore] = useState(false);
+  const [assessmentComposite, setAssessmentComposite] = useState<number | null>(null);
+
+  const PASSING_SCORE = 75;
+  const retakeKey = `${storageKeyPrefix}-assessment-retake-used`;
+  const retakeUsed = (() => {
+    try { return localStorage.getItem(retakeKey) === 'true'; } catch { return false; }
+  })();
 
   const safeStepIndex = Math.min(currentStepIndex, steps.length - 1);
   const currentStep = steps[safeStepIndex];
@@ -254,8 +263,11 @@ export function ModuleViewer({
       return;
     }
 
-    // Last step of last module — go to completion screen
+    // Last step of last module — go to completion screen (only if passing)
     if (isLastStep && isLastModule && onTrainingComplete) {
+      if (assessmentComposite !== null && assessmentComposite < PASSING_SCORE) {
+        return; // Block — handled by retake UI in the assessment card
+      }
       onAdvance(steps.length);
       onTrainingComplete();
       return;
@@ -600,32 +612,63 @@ export function ModuleViewer({
                 quizSteps={quizSteps}
                 getAllModuleScores={getAllModuleScores}
                 onComplete={handleStepComplete}
+                onScoreCalculated={setAssessmentComposite}
                 moduleWeights={moduleWeights ?? CONTRIBUTOR_MODULE_WEIGHTS}
                 storageKeyPrefix={storageKeyPrefix}
+                passingScore={PASSING_SCORE}
+                retakeUsed={retakeUsed}
               />
             )}
           </div>
 
-          <div className='flex items-center justify-between'>
-            <div>
-              {!isFirstStep && (
-                <Button variant='outline' onClick={handleBack}>
-                  <ArrowLeft className='mr-1.5 size-4' />
-                  Back
+          {/* Button area — special handling for failed assessments */}
+          {currentStep.type === 'assessment-results' && assessmentComposite !== null && assessmentComposite < PASSING_SCORE ? (
+            <div className='mt-8 flex justify-center'>
+              {!retakeUsed && onRetakeAssessment ? (
+                <Button
+                  size='lg'
+                  onClick={() => {
+                    try { localStorage.setItem(retakeKey, 'true'); } catch { /* ignore */ }
+                    // Clear submission flag so retake score gets submitted
+                    try { localStorage.removeItem(`${storageKeyPrefix}-scores-submitted`); } catch { /* ignore */ }
+                    // Clear quiz state
+                    setQuizResults({});
+                    setQuizAnswers({});
+                    setStepComplete(false);
+                    setAssessmentComposite(null);
+                    try {
+                      localStorage.removeItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
+                      localStorage.removeItem(`${storageKeyPrefix}-quiz-results-${moduleId}`);
+                    } catch { /* ignore */ }
+                    onRetakeAssessment();
+                  }}
+                >
+                  Retake Final Assessment
                 </Button>
-              )}
-            </div>
-            <Button
-              size='lg'
-              onClick={handleAdvance}
-              disabled={!stepComplete && !isReviewMode}
-            >
-              {buttonLabel}
-              {isLastStepReview ? (
-                <ArrowRight className='ml-1.5 size-4' />
               ) : null}
-            </Button>
-          </div>
+            </div>
+          ) : (
+            <div className='flex items-center justify-between'>
+              <div>
+                {!isFirstStep && (
+                  <Button variant='outline' onClick={handleBack}>
+                    <ArrowLeft className='mr-1.5 size-4' />
+                    Back
+                  </Button>
+                )}
+              </div>
+              <Button
+                size='lg'
+                onClick={handleAdvance}
+                disabled={!stepComplete && !isReviewMode}
+              >
+                {buttonLabel}
+                {isLastStepReview ? (
+                  <ArrowRight className='ml-1.5 size-4' />
+                ) : null}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -647,8 +690,11 @@ interface AssessmentResultsCardProps {
   quizSteps: Step[];
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
   onComplete: () => void;
+  onScoreCalculated?: (composite: number) => void;
   moduleWeights: ModuleWeight[];
   storageKeyPrefix: string;
+  passingScore: number;
+  retakeUsed: boolean;
 }
 
 function AssessmentResultsCard({
@@ -656,10 +702,13 @@ function AssessmentResultsCard({
   quizSteps,
   getAllModuleScores,
   onComplete,
+  onScoreCalculated,
   moduleWeights,
   storageKeyPrefix,
+  passingScore,
+  retakeUsed,
 }: AssessmentResultsCardProps) {
-  const hasSubmitted = useRef(false);
+  const submittedKey = `${storageKeyPrefix}-scores-submitted`;
 
   // Compute module 7 score from local quiz state
   const m7Correct = quizSteps.filter(s => quizResults[s.id] === true).length;
@@ -682,12 +731,16 @@ function AssessmentResultsCard({
   const composite = rows.reduce((sum, row) => sum + row.pct * row.weight, 0);
   const compositeRounded = Math.round(composite);
 
+  const passed = compositeRounded >= passingScore;
+
   useEffect(() => {
     onComplete();
+    onScoreCalculated?.(compositeRounded);
 
-    // Submit scores to Google Sheets (once)
-    if (!hasSubmitted.current) {
-      hasSubmitted.current = true;
+    // Submit scores to Google Sheets (once — localStorage flag survives StrictMode remounts)
+    const alreadySubmitted = (() => { try { return localStorage.getItem(submittedKey) === 'true'; } catch { return false; } })();
+    if (!alreadySubmitted) {
+      try { localStorage.setItem(submittedKey, 'true'); } catch { /* ignore */ }
       const email = getStoredEmail();
       if (email) {
         submitScoresToSheet({
@@ -711,12 +764,39 @@ function AssessmentResultsCard({
   return (
     <Card>
       <CardHeader className='text-center'>
-        <div className='mx-auto mb-2 flex size-16 items-center justify-center rounded-full bg-primary/10'>
-          <Trophy className='size-8 text-primary' weight='fill' />
+        <div className={cn(
+          'mx-auto mb-2 flex size-16 items-center justify-center rounded-full',
+          passed ? 'bg-primary/10' : 'bg-rose-100'
+        )}>
+          {passed ? (
+            <Trophy className='size-8 text-primary' weight='fill' />
+          ) : (
+            <WarningCircle className='size-8 text-rose-500' weight='fill' />
+          )}
         </div>
-        <CardTitle className='text-xl'>Assessment Results</CardTitle>
+        <CardTitle className='text-xl'>
+          {passed ? 'Assessment Results' : 'Assessment Not Passed'}
+        </CardTitle>
       </CardHeader>
       <CardContent className='space-y-6'>
+        {/* Pass/fail message */}
+        {!passed && (
+          <div className='rounded-lg border border-rose-200 bg-rose-50 p-4 text-center'>
+            <p className='text-sm font-medium text-rose-800'>
+              You did not receive a passing score of {passingScore}% or higher on training.
+            </p>
+            {!retakeUsed ? (
+              <p className='mt-1 text-sm text-rose-700'>
+                You have one chance to retake the final assessment.
+              </p>
+            ) : (
+              <p className='mt-1 text-sm text-rose-700'>
+                You have already used your retake attempt. Please email support@tsip.ai if you have any questions.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Composite score */}
         <div className='text-center'>
           <p className='text-4xl font-bold text-foreground'>{compositeRounded}%</p>

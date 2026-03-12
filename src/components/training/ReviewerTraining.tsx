@@ -57,6 +57,7 @@ export function ReviewerTraining() {
           onSaveQuizAnswers={(answers) => reviewer.saveQuizAnswers(reviewer.viewingModule, answers)}
           getAllModuleScores={reviewer.getModuleScore}
           onTrainingComplete={() => navigate('/')}
+          onRetakeAssessment={() => reviewer.resetCurrentModule()}
         />
       </main>
     </div>
