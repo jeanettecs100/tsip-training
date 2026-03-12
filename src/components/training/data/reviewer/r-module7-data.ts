@@ -94,11 +94,6 @@ export const reviewerModule7Steps: Step[] = [
           'Is the spreadsheet professionally formatted with consistent conventions?',
       },
       {
-        term: 'Business Realism',
-        definition:
-          'Does the task represent a genuine analyst workflow with realistic scope?',
-      },
-      {
         term: 'Input-to-Output',
         definition:
           'Do the input and output form a logical progression with meaningful analytical additions?',

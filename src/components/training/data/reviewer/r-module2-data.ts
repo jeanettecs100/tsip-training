@@ -23,7 +23,6 @@ export const reviewerModule2Steps: Step[] = [
           'Data Integrity — No error values (#REF, #DIV/0, #N/A), no broken references, no external links (broken named ranges are acceptable so long as they do not cause cascading errors in the analysis)',
           'Formula Quality — Dynamic, auditable formulas with clearly separated assumptions; no or minimal hardcoded values in calculations',
           'Formatting — Clean, professional formatting with consistent number formats, fonts, and alignment',
-          'Business Realism — Task is a genuine finance workflow that represents ~1 hour of skilled associate work',
           'Input-to-Output — Input and output form a logical, realistic progression with proper handling of downstream dependencies if a section is removed from the seed workbook',
         ],
       },

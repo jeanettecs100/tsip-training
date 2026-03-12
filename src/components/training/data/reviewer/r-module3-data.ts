@@ -5,10 +5,10 @@ export const reviewerModule3Steps: Step[] = [
     type: 'content',
     id: 'r3-intro',
     title: 'Evaluating Spreadsheets',
-    body: 'Spreadsheet evaluation is one of your core responsibilities as a reviewer. You will assess both the input and output workbooks using a five-item yes/no checklist. Each item is binary — it either passes or it does not. There is no partial credit or middle ground.',
+    body: 'Spreadsheet evaluation is one of your core responsibilities as a reviewer. You will assess both the input and output workbooks using a four-item yes/no checklist. Each item is binary — it either passes or it does not. There is no partial credit or middle ground.',
     callout: {
       type: 'info',
-      text: 'The deliverable spreadsheet is a reference — it exists to help visualize a good response and validate the rubric. You must ensure it meets a professional baseline across all five checklist items.',
+      text: 'The deliverable spreadsheet is a reference — it exists to help visualize a good response and validate the rubric. You must ensure it meets a professional baseline across all four checklist items.',
     },
   },
   {
@@ -93,38 +93,8 @@ export const reviewerModule3Steps: Step[] = [
   },
   {
     type: 'content',
-    id: 'r3-business-realism',
-    title: 'Checklist Item 4: Business Realism',
-    body: 'Business Realism evaluates whether the task represents a genuine analyst workflow with appropriate scope. The task should reflect something a finance professional would actually build — not a trivial exercise or an impossibly broad rebuild.',
-    table: {
-      headers: ['Criteria is met when', 'Criteria is not met when'],
-      rows: [
-        [
-          'Clear, realistic business application; genuine analyst workflow; approximately 1 hour of skilled work',
-          'No clear business purpose; purely cosmetic changes (reformatting headers, changing fonts); or over-scoped (rebuilding an entire model from scratch)',
-        ],
-      ],
-      columnStyles: { 0: 'good', 1: 'bad' },
-    },
-    sections: [
-      {
-        table: {
-          headers: ['Good Example', 'Bad Example'],
-          rows: [
-            [
-              'Adding a multi-tranche debt schedule to an LBO model and flowing interest expense to the income statement',
-              'Reformatting headers and changing the font from Calibri to Arial across all tabs',
-            ],
-          ],
-          columnStyles: { 0: 'good', 1: 'bad' },
-        },
-      },
-    ],
-  },
-  {
-    type: 'content',
     id: 'r3-progression',
-    title: 'Checklist Item 5: Input-to-Output',
+    title: 'Checklist Item 4: Input-to-Output',
     body: 'Input-to-Output checks whether the input and output form a logical, realistic sequence — where the output represents a natural next iteration of the model. The change should be analytically meaningful and follow a logical prerequisite chain.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
@@ -169,10 +139,6 @@ export const reviewerModule3Steps: Step[] = [
         definition: 'Professional, consistent number formats, fonts, alignment, and presentation',
       },
       {
-        term: 'Business Realism',
-        definition: 'Task represents a genuine analyst workflow with realistic scope',
-      },
-      {
         term: 'Input-to-Output',
         definition: 'Input and output form a logical progression with meaningful analytical additions',
       },
@@ -196,15 +162,15 @@ export const reviewerModule3Steps: Step[] = [
     type: 'scenario',
     id: 'r3-scenario-cosmetic',
     scenario: 'You are reviewing a task where the input workbook contains a fully built operating model. The output workbook adds a tab that reformats the income statement headers and changes the font from Calibri to Arial across all tabs. No new analysis, calculations, or analytical content has been added.',
-    question: 'How would you mark Business Realism and Input-to-Output?',
+    question: 'How would you mark Input-to-Output?',
     options: [
-      'Both Yes — formatting improvements are a valid task',
-      'Business Realism: No, Input-to-Output: Yes — the progression is logical even if not realistic',
-      'Both No — purely cosmetic changes with no analytical substance or logical progression',
-      'Business Realism: Yes, Input-to-Output: No — formatting is realistic work but the progression is minimal',
+      'Yes — formatting improvements are a valid progression',
+      'No — purely cosmetic changes with no meaningful analytical progression from input to output',
+      'Yes — the output is clearly different from the input',
+      'No — but only because the formatting changes are inconsistent',
     ],
-    correctIndex: 2,
-    explanation: 'Both items are No. Reformatting headers and changing fonts are purely cosmetic changes with no clear business purpose (Business Realism fails) and no meaningful analytical progression from input to output (Input-to-Output fails). A passing task requires genuine analytical work that a finance professional would actually perform.',
+    correctIndex: 1,
+    explanation: 'This is No on Input-to-Output. Reformatting headers and changing fonts are purely cosmetic changes with no meaningful analytical progression. The output must represent a logical next iteration of the model with genuine analytical additions — not just visual changes.',
   },
   {
     type: 'scenario',
