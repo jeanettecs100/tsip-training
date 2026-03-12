@@ -223,7 +223,7 @@ export const module2Steps: Step[] = [
     type: 'content',
     id: 'm2-evaluation-criteria',
     title: 'Evaluation Criteria',
-    body: 'Every spreadsheet task is evaluated across five dimensions, each scored from 1 (significant deficiencies) to 5 (top-tier work). Think of these as the checklist a managing director mentally runs through before sending an associate\u2019s model to a client.',
+    body: 'Every spreadsheet task is evaluated across four dimensions. Think of these as the checklist a finance professional mentally runs through as they review an associate\u2019s model.',
     table: {
       headers: ['Dimension', 'What It Measures', 'Good Example', 'Bad Example'],
       columnStyles: { 2: 'good', 3: 'bad' },
@@ -245,12 +245,6 @@ export const module2Steps: Step[] = [
           'Polished, client-ready appearance with consistent number formats, fonts, and alignment',
           'Uniform styling; consistent number formats; well-defined section headings; professional color scheme',
           'Raw data dump with scratch calculations visible; inconsistent fonts and number formats across tabs',
-        ],
-        [
-          'Business Realism',
-          'Task mirrors a legitimate analyst assignment with tangible business purpose and appropriate scope',
-          'Building a DCF with dynamic WACC for a valuation scenario; adding a returns waterfall and sensitivity analysis to an LBO',
-          'Purely cosmetic edits; reformatting cells or changing colors without any analytical substance',
         ],
         [
           'I/O Progression',
