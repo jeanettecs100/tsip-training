@@ -15,7 +15,7 @@ export const module6Steps: Step[] = [
     type: 'task-form-preview',
     id: 'm6-practice-form',
     title: 'Practice: Submit a Task',
-    body: 'Use the form below to practice filling out a task submission. The seed workbook is already provided — your job is to write a prompt and build a rubric, just as you would on the real platform. Hit submit when you are ready and the form will validate your work.',
+    body: 'Use the form below to practice filling out a task submission. The seed workbook is already provided — your job is to create input/output spreadsheets, write a prompt, and build a rubric, just as you would on the real platform. Hit submit when you are ready and the form will validate your work.',
     mode: 'practice',
     callout: {
       type: 'tip',
