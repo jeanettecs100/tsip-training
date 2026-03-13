@@ -61,7 +61,7 @@ export const reviewerModule2Steps: Step[] = [
     ],
     sections: [
       {
-        body: 'Auto-checks cover things like error values, hardcodes embedded in formulas, pre-linked blank cells, and AI-detection flags like suspicious spreadsheet author meta data and em dash usage.',
+        body: 'Auto-checks cover things like error values, hardcodes embedded in formulas, pre-linked blank cells, and AI-detection flags like suspicious spreadsheet author metadata and em dash usage.',
         callout: {
           type: 'warning',
           text: 'Auto-check flags do NOT replace your review — they supplement it. Never assume a clean auto-check report means the task is ready to approve.',
@@ -82,7 +82,7 @@ export const reviewerModule2Steps: Step[] = [
           items: [
             'Download the input and output workbooks — verify the task area is blank or deleted in the input, and populated with the completed analysis in the output',
             'Check the input workbook for proper dependency handling — downstream outputs of the removed task section should either be deleted or replaced with hardcoded placeholder values, if appropriate',
-            'Review any auto-check flags on the submission and determine whether they must be resolved',
+            'Review any auto-check flags on the workbook and determine whether they must be resolved',
             'Go through the 4 spreadsheet checklist items and mark each one according to your review; if a criteria is not met, provide written feedback',
           ],
         },
@@ -98,7 +98,7 @@ export const reviewerModule2Steps: Step[] = [
           start: 5,
           items: [
             'Open the prompt side-by-side with the output workbook',
-            'Review any auto-check flags on the submission and determine whether they must be resolved. Remember to take AI pattern flags seriously and raise them to a TSIP team member if you\'re struggling to determine whether a prompt is human-written',
+            'Review any auto-check flags on the prompt and determine whether they must be resolved. Remember to take AI pattern flags seriously and raise them to a TSIP team member if you\'re struggling to determine whether a prompt is human-written',
             'Go through the 5 prompt checklist items and mark each one according to your review; if a criteria is not met, provide written feedback',
           ],
         },
@@ -110,9 +110,43 @@ export const reviewerModule2Steps: Step[] = [
           start: 8,
           items: [
             'Review the rubric against the output workbook — does it align with the newly-added analysis?',
-            'Review any auto-check flags on the submission and determine whether they must be resolved',
+            'Review any auto-check flags on the rubric and determine whether they must be resolved',
             'Go through the 6 rubric checklist items and mark each one according to your review; if a criteria is not met, provide written feedback',
           ],
+        },
+      },
+    ],
+  },
+  {
+    type: 'content',
+    id: 'r2-direct-changes',
+    title: 'Making Direct Changes',
+    body: 'To keep the review process efficient, we expect reviewers to make minor edits directly to a task rather than sending it back for small fixes. If a change takes less than a few minutes and doesn\'t alter the fundamental design of the task, fix it yourself.',
+    sections: [
+      {
+        body: 'Examples of changes you should make directly:',
+        bullets: [
+          'Deleting pre-linked blank cells and reuploading the input workbook',
+          'Unhiding sheets, rows, or columns in the workbook',
+          'Deleting images or comments from the workbook',
+          'Resolving error values if they are not propagating through the workbook',
+          'Making minor wording changes in the prompt to improve naturalness',
+          'Removing minor instances of overspecification',
+          'Adding tolerance intervals to rubric items',
+          'Fixing output validation values if incorrect',
+          'Adding question marks to rubric items',
+        ],
+      },
+      {
+        body: 'Changes you should NOT make directly — send these back to the contributor instead:',
+        bullets: [
+          'Making fundamental changes to the task if it is not sufficiently complex',
+          'Fixing a task that you suspect was AI-generated (rewriting the prompt or rebuilding the spreadsheet task)',
+          'Populating an entire rubric category that is missing',
+        ],
+        callout: {
+          type: 'warning',
+          text: 'A good heuristic: if you would spend more than 20 minutes making direct fixes, the task should go back to the contributor instead.',
         },
       },
     ],
