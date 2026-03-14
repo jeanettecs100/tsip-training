@@ -5,17 +5,17 @@ export const reviewerModule5Steps: Step[] = [
     type: 'content',
     id: 'r5-intro',
     title: 'Evaluating Rubrics',
-    body: 'The rubric is the most critical component of any task. It determines how an AI-generated spreadsheet will be scored — and if the rubric is flawed, the scoring is meaningless. You will evaluate rubrics using a six-item yes/no checklist. Most of your review time should be spent here.',
+    body: 'The rubric is the most critical component of any task. It determines how an AI-generated spreadsheet will be scored — and if the rubric is flawed, the scoring is meaningless. You will evaluate rubrics using a six-item checklist.',
     callout: {
       type: 'danger',
-      text: 'A rubric with stacked criteria, missing values, or subjective language will produce inconsistent scores across reviewers. Every criterion must be unambiguous enough that two independent reviewers would arrive at the same result.',
+      text: 'A rubric with stacked criteria, missing values, or subjective language will produce inconsistent scores. Every criterion must be unambiguous and a correct reflection of the desired output.',
     },
   },
   {
     type: 'content',
     id: 'r5-binary-clarity',
     title: 'Checklist Item 1: Binary Clarity',
-    body: 'Every rubric criterion must be answerable with a clear YES or NO. If a reviewer has to make a judgment call about whether something "looks right" or is "adequate," the criterion is not binary.',
+    body: 'Every rubric criterion must be answerable with a clear YES or NO. If the check includdes language about whether something "looks right" or is "adequate," the criterion is not binary.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       columnStyles: { 0: 'good', 1: 'bad' },
@@ -51,14 +51,14 @@ export const reviewerModule5Steps: Step[] = [
     type: 'content',
     id: 'r5-self-contained',
     title: 'Checklist Item 2: Self-Contained',
-    body: 'Every criterion must be evaluable using only the rubric itself and the spreadsheet being graded. A reviewer should never need to flip back to the prompt to understand what a criterion is testing.',
+    body: 'Every criterion must be evaluable using only the rubric itself and the spreadsheet being graded. It cannot reference the prompt or other external sources.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       columnStyles: { 0: 'good', 1: 'bad' },
       rows: [
         [
           'Every criterion can be evaluated using only the rubric and the spreadsheet; no external references needed',
-          'Any criteria say "per the prompt," "as shown in the output," or "as specified" without restating the actual expected values',
+          'Any criteria say "per the prompt," or "as specified" without restating the actual expected values',
         ],
       ],
     },
@@ -87,14 +87,14 @@ export const reviewerModule5Steps: Step[] = [
     type: 'content',
     id: 'r5-single-check',
     title: 'Checklist Item 3: Single-Check Principle',
-    body: 'Each rubric criterion should test exactly one thing. When criteria bundle multiple checks together — known as "stacking" — it becomes impossible to give partial credit and the scoring loses granularity.',
+    body: 'Each rubric criterion should test exactly one thing. When criteria bundle multiple checks together, it becomes impossible to give partial credit and the scoring loses granularity.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       columnStyles: { 0: 'good', 1: 'bad' },
       rows: [
         [
-          'Each criterion tests exactly one thing; no bundled or compound checks',
-          'Any criteria bundle multiple checks into one (stacking) — e.g., testing tab existence AND formula correctness AND dynamic functionality in one criterion',
+          'Each criterion tests exactly one thing; no bundled checks',
+          'Any criteria bundle multiple checks into one — e.g., testing tab existence AND formula correctness AND dynamic functionality in one criterion',
         ],
       ],
     },
@@ -112,10 +112,6 @@ export const reviewerModule5Steps: Step[] = [
         },
       },
       {
-        callout: {
-          type: 'danger',
-          text: 'The bad example bundles four distinct checks into one criterion worth 25 points. If the tab exists but the totals are wrong, the reviewer must choose between awarding all 25 points or none.',
-        },
       },
     ],
   },
@@ -123,14 +119,14 @@ export const reviewerModule5Steps: Step[] = [
     type: 'content',
     id: 'r5-coverage',
     title: 'Checklist Item 4: Category Coverage',
-    body: 'A well-constructed rubric covers all applicable categories of evaluation. Missing an entire category means a significant aspect of the spreadsheet goes ungraded.',
+    body: 'A well-constructed rubric covers all applicable categories of evaluation with at least 4 criteria each. Missing an entire category means a significant aspect of the spreadsheet goes ungraded.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       columnStyles: { 0: 'good', 1: 'bad' },
       rows: [
         [
-          'Rubric covers all applicable categories',
-          'Rubric is missing one or more applicable categories',
+          'Rubric covers all applicable categories; minimum of 4 criteria per category is met',
+          'Rubric is missing one or more applicable categories; fewer than 4 criteria per category',
         ],
       ],
     },
@@ -147,6 +143,16 @@ export const reviewerModule5Steps: Step[] = [
         ],
       },
     ],
+    note: {
+      body: 'Exceptions — not every task type requires all six categories:',
+      table: {
+        headers: ['Task Type', 'Acceptable to Omit'],
+        rows: [
+          ['Task without inputs provided in the prompt', 'Input Data Accuracy'],
+          ['"Create an error" tasks', 'Input Data Accuracy and Structural Completeness'],
+        ],
+      },
+    },
   },
   {
     type: 'content',
@@ -158,7 +164,7 @@ export const reviewerModule5Steps: Step[] = [
       columnStyles: { 0: 'good', 1: 'bad' },
       rows: [
         [
-          'Points clearly differentiate importance: high weights for complex logic, low for formatting, negative points for errors',
+          'Points clearly differentiate importance: domain knowledge and complex logic weighted higher than secondary outputs and formatting, negative points for errors',
           'Flat or arbitrary weighting where all items are worth the same; or weights are inverted (formatting weighted more than core calculations)',
         ],
       ],
@@ -170,17 +176,13 @@ export const reviewerModule5Steps: Step[] = [
           columnStyles: { 0: 'good', 1: 'bad' },
           rows: [
             [
-              'NPV calculation: +25; required tab exists: +10; correct section labels: +5; Excel errors present: -15',
+              'Complex formula logic: +25; required tab exists: +10; correct input value: +5; Excel errors present: -15',
               'Every criterion is worth +10 regardless of whether it tests tab existence or complex IRR logic',
             ],
           ],
         },
       },
       {
-        callout: {
-          type: 'tip',
-          text: 'Negative points for errors (e.g., circular references, #REF! errors) are a sign of a well-designed rubric. They penalize pitfalls that a skilled analyst would avoid.',
-        },
       },
     ],
   },
@@ -235,11 +237,11 @@ export const reviewerModule5Steps: Step[] = [
       },
       {
         term: 'Single-Check Principle',
-        definition: 'Each criterion tests exactly one thing with no bundled or compound checks',
+        definition: 'Each criterion tests exactly one thing with no bundled checks',
       },
       {
         term: 'Category Coverage',
-        definition: 'Rubric addresses all applicable evaluation categories from structure to pitfalls',
+        definition: 'Rubric addresses all applicable evaluation categories with at least 4 criteria each',
       },
       {
         term: 'Weighting & Scoring',
@@ -247,23 +249,23 @@ export const reviewerModule5Steps: Step[] = [
       },
       {
         term: 'Specific & Testable',
-        definition: 'Criteria include exact values, ranges, tolerance intervals, and no question marks for objective verification',
+        definition: 'Criteria include exact values, tolerance intervals, and question marks for objective verification',
       },
     ],
   },
   {
     type: 'scenario',
     id: 'r5-scenario-stacked',
-    scenario: 'You encounter the following rubric criterion: "Does the DCF tab exist, use WACC of 9.5% as the discount rate, and show an implied share price within 5% of $42.30? [+30]"',
+    scenario: 'You encounter the following rubric criterion: "Does the DCF tab exist, use WACC of 9.5% as the discount rate, and show an implied share price of $42.30? [+30]"',
     question: 'Which checklist item does this criterion fail?',
     options: [
-      'Binary Clarity — the criterion is subjective',
-      'Self-Contained — it does not include expected values',
-      'Single-Check Principle — it bundles three distinct tests (tab existence, WACC value, share price) into one criterion',
-      'Weighting & Scoring — the point value is too high',
+      'Binary Clarity',
+      'Self-Contained',
+      'Single-Check Principle',
+      'Weighting & Scoring',
     ],
     correctIndex: 2,
-    explanation: 'This criterion bundles three separate checks: (1) does the DCF tab exist, (2) is the WACC set to 9.5%, and (3) is the implied share price within 5% of $42.30. If the tab exists and the WACC is correct but the share price is wrong, the reviewer cannot assign partial credit. It should be split into three separate criteria.',
+    explanation: 'This criterion bundles three separate checks: (1) does the DCF tab exist, (2) is the WACC set to 9.5%, and (3) is the implied share price $42.30. If the tab exists and the WACC is correct but the share price is wrong, the reviewer cannot assign partial credit. It should be split into three separate criteria.',
   },
   {
     type: 'scenario',
@@ -271,39 +273,37 @@ export const reviewerModule5Steps: Step[] = [
     scenario: 'A rubric contains the following criterion: "Are all input assumptions entered correctly as specified in the prompt? [+15]"',
     question: 'Which checklist item does this criterion fail?',
     options: [
-      'Self-Contained — it requires reading the prompt to know what values to check',
-      'Binary Clarity — the criterion is subjective',
-      'Category Coverage — it does not fit into any standard category',
-      'Weighting & Scoring — 15 points is too many for input checks',
+      'Self-Contained',
+      'Binary Clarity',
+      'Category Coverage',
+      'Weighting & Scoring',
     ],
     correctIndex: 0,
-    explanation: 'This criterion says "as specified in the prompt" without restating the actual input assumptions. A reviewer would need to leave the rubric, read the prompt, identify the assumptions, and then check the spreadsheet. It should be rewritten to list each expected input value explicitly, e.g., "Is the revenue growth rate set to 5%? [+5]".',
+    explanation: 'This criterion says "as specified in the prompt" without restating the actual input assumptions. It should be rewritten to list each expected input value explicitly, e.g., "Is the revenue growth rate set to 5%? [+5]".',
   },
   {
     type: 'multiple-choice',
     id: 'r5-quiz-weighting',
     question: 'A rubric assigns +10 points to every criterion, whether it tests tab existence, a complex IRR calculation, or correct formatting. How would you mark Weighting & Scoring?',
     options: [
-      'Yes — points are assigned consistently',
-      'Yes — as long as the total points add up correctly',
-      'No — but only because the total point count is wrong',
-      'No — flat weighting where all items are worth the same regardless of complexity or importance fails the checklist item',
+      'Checked — points are assigned consistently',
+      'Unchecked — the evaluation is not as valuable when flat weighting is applied',
     ],
-    correctIndex: 3,
-    explanation: 'Flat weighting where every criterion is worth the same amount regardless of complexity or importance fails the Weighting & Scoring checklist item. Points must differentiate: complex calculations should be weighted higher than structural/formatting checks, and negative points should penalize errors.',
+    correctIndex: 1,
+    explanation: 'Flat weighting where every criterion is worth the same amount regardless of complexity or importance fails the Weighting & Scoring checklist item. Points must differentiate items based on complexity and importance.',
   },
   {
     type: 'multiple-choice',
     id: 'r5-quiz-tolerance',
     question: 'A rubric criterion states: "Is the Year 3 EBITDA equal to $14,500,000? [+10]". What checklist item does this most clearly fail?',
     options: [
-      'Binary Clarity — the criterion is ambiguous',
-      'Self-Contained — it does not specify which tab to check',
-      'Specific & Testable — it is missing a tolerance interval to account for minor formula or rounding differences',
-      'Single-Check Principle — it tests both the value and the year',
+      'Binary Clarity',
+      'Self-Contained',
+      'Specific & Testable',
+      'Single-Check Principle',
     ],
     correctIndex: 2,
-    explanation: 'Output validation criteria must include tolerance intervals. Minor differences in rounding, formula ordering, or mid-year conventions could produce a value of $14,487,000 or $14,512,000 — both arguably correct. The criterion should read something like "Is the Year 3 EBITDA approximately $14,500,000 (+/-2%)? [+10]".',
+    explanation: 'Output validation criteria must include tolerance intervals in order to satisfy the Specific & Testable check. The criterion should read something like "Is the Year 3 EBITDA approximately $14,500,000 (±2%)? [+10]".',
   },
   {
     type: 'multiple-choice',
@@ -312,10 +312,10 @@ export const reviewerModule5Steps: Step[] = [
     options: [
       '"Does the sensitivity table look reasonable and complete? [+15]"',
       '"Is the debt schedule properly structured with appropriate amortization per the prompt? [+20]"',
-      '"Does the Sources & Uses tab include a row for Revolving Credit Facility with a value of $50M? [+10]"',
-      '"Are the financial statements accurate and well-formatted with correct formulas? [+25]"',
+      '"Is the Year 1 revolving credit facility balance set to $50M? [+10]"',
+      '"Is there a debt build section with interest calculated as average of beginning and ending balance * interest rate? [+25]"',
     ],
     correctIndex: 2,
-    explanation: 'Option C is the only criterion that passes all six checklist items: it is binary (yes/no), self-contained (specifies the tab, row label, and value), tests a single thing (one specific row), and includes a specific testable value ($50M). Option A uses subjective language ("look reasonable"), Option B references the prompt, and Option D stacks accuracy, formatting, and formula correctness into one criterion.',
+    explanation: 'Option C is the only criterion that passes all six checklist items. Option A uses subjective language ("look reasonable"), Option B references the prompt, and Option D stacks structural and formula logic checks into one criterion.',
   },
 ];

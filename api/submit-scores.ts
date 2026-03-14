@@ -7,7 +7,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { email, compositeScore, modules, submittedAt } = req.body;
+    const { email, compositeScore, modules, submittedAt, trainingType } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
@@ -28,6 +28,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'GOOGLE_SHEET_ID not configured' });
     }
 
+    const isReviewer = trainingType === 'reviewer';
+    const sheetName = isReviewer ? 'Sheet2' : 'Sheet1';
+
     // Build module score lookup: moduleId -> "correct/total (percent%)"
     const moduleScores: Record<number, string> = {};
     if (Array.isArray(modules)) {
@@ -36,50 +39,76 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    const row = [
-      submittedAt || new Date().toISOString(),
-      email,
-      `${compositeScore}%`,
-      moduleScores[1] || '',
-      moduleScores[2] || '',
-      moduleScores[3] || '',
-      moduleScores[4] || '',
-      moduleScores[5] || '',
-      moduleScores[7] || '',
-    ];
+    const row = isReviewer
+      ? [
+          submittedAt || new Date().toISOString(),
+          email,
+          `${compositeScore}%`,
+          moduleScores[1] || '',
+          moduleScores[2] || '',
+          moduleScores[3] || '',
+          moduleScores[4] || '',
+          moduleScores[5] || '',
+          moduleScores[6] || '',
+        ]
+      : [
+          submittedAt || new Date().toISOString(),
+          email,
+          `${compositeScore}%`,
+          moduleScores[1] || '',
+          moduleScores[2] || '',
+          moduleScores[3] || '',
+          moduleScores[4] || '',
+          moduleScores[5] || '',
+          moduleScores[7] || '',
+        ];
+
+    const headers = isReviewer
+      ? [
+          'Timestamp',
+          'Email',
+          'Composite Score',
+          'M1 Introduction',
+          'M2 Reviewer Workflow',
+          'M3 Evaluating Spreadsheets',
+          'M4 Evaluating Prompts',
+          'M5 Evaluating Rubrics',
+          'M6 Final Assessment',
+        ]
+      : [
+          'Timestamp',
+          'Email',
+          'Composite Score',
+          'M1 Introduction',
+          'M2 Spreadsheet Tasks',
+          'M3 Prompt Writing',
+          'M4 Rubric Writing',
+          'M5 Platform Navigation',
+          'M7 Final Assessment',
+        ];
+
+    const headerRange = `${sheetName}!A1:I1`;
 
     // Check if headers exist
     const existing = await sheets.spreadsheets.values.get({
       spreadsheetId: sheetId,
-      range: 'Sheet1!A1:I1',
+      range: headerRange,
     });
 
     if (!existing.data.values || existing.data.values.length === 0) {
       // Write headers first
       await sheets.spreadsheets.values.append({
         spreadsheetId: sheetId,
-        range: 'Sheet1!A1',
+        range: `${sheetName}!A1`,
         valueInputOption: 'RAW',
-        requestBody: {
-          values: [[
-            'Timestamp',
-            'Email',
-            'Composite Score',
-            'M1 Introduction',
-            'M2 Spreadsheet Tasks',
-            'M3 Prompt Writing',
-            'M4 Rubric Writing',
-            'M5 Platform Navigation',
-            'M7 Final Assessment',
-          ]],
-        },
+        requestBody: { values: [headers] },
       });
     }
 
     // Append the score row
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
-      range: 'Sheet1!A1',
+      range: `${sheetName}!A1`,
       valueInputOption: 'RAW',
       requestBody: { values: [row] },
     });

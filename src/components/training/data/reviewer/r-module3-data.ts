@@ -5,10 +5,45 @@ export const reviewerModule3Steps: Step[] = [
     type: 'content',
     id: 'r3-intro',
     title: 'Evaluating Spreadsheets',
-    body: 'Spreadsheet evaluation is one of your core responsibilities as a reviewer. You will assess both the input and output workbooks using a four-item yes/no checklist. Each item is binary — it either passes or it does not. There is no partial credit or middle ground.',
+    body: 'Spreadsheet evaluation is one of your core responsibilities as a reviewer. You will assess both the input and output workbooks using a four-item checklist. Each item is binary — it either passes or it does not. There is no partial credit or middle ground.',
     callout: {
       type: 'info',
-      text: 'The deliverable spreadsheet is a reference — it exists to help visualize a good response and validate the rubric. You must ensure it meets a professional baseline across all four checklist items.',
+      text: 'The output spreadsheet is the gold standard for the task — it exists to help visualize a good response and validate the rubric. You must ensure it meets a professional baseline across all four checklist items.',
+    },
+  },
+  {
+    type: 'content',
+    id: 'r3-complexity',
+    title: 'Complexity Criteria',
+    body: 'Every task is tagged as Basic, Intermediate, or Advanced. The table below defines what each level looks like across four dimensions. Use this grid when evaluating whether a task meets complexity standards.',
+    table: {
+      headers: ['Dimension', 'Advanced', 'Intermediate', 'Basic'],
+      rows: [
+        [
+          'Time Approximation',
+          '~1 hour+ task',
+          '~1 hour task',
+          '~45 minute task',
+        ],
+        [
+          'Formula Complexity',
+          'Formulas involve intermediate and advanced Excel functions (INDEX/MATCH, VLOOKUP) and multi-layered nesting where 3+ functions are combined in a single formula; calculations are interdependent',
+          'Formulas incorporate moderately complex functions (SUMIFS, INDEX/MATCH, nested IFs, XNPV/XIRR) or multi-step calculations where outputs from one formula feed into the next',
+          'Formulas rely on standard Excel functions (SUM, AVERAGE, simple IF statements, basic cell references); calculations are single-step and standard financial logic (e.g., simple cash flow build)',
+        ],
+        [
+          'Conceptual Complexity',
+          'Task involves specialized financial structures or niche analytical frameworks that go beyond standard corporate finance (e.g., tax equity flip structures, debt sculpting with DSCR constraints, waterfall distributions with multiple hurdle rates, convertible debt)',
+          'Task involves well-established but multi-step financial frameworks that require the analyst to connect several moving parts (e.g., LBO with returns analysis, DCF, M&A accretion/dilution, working capital adjustments, WACC buildup)',
+          'Task involves foundational financial modeling concepts that are standard knowledge for any finance professional (e.g., three-statement model, straight-line depreciation schedules, basic budget vs. actual variance analysis, annual roll-up)',
+        ],
+        [
+          'Model Integration',
+          'Task requires LLM to reason through input pulls and output dependencies; inputs come from multiple tabs in the model and calculated outputs must be subsequently linked back into the model',
+          'Task requires input pulls from more than one tab or section of the model; calculated outputs must link back into the model, but the dependency chain is straightforward and does not require the LLM to trace circular or multi-step linkages',
+          'Task is a \u2018side analysis\u2019 that requires inputs from 1 tab; calculated outputs are pre-linked or do not flow back into the model',
+        ],
+      ],
     },
   },
   {
@@ -20,7 +55,7 @@ export const reviewerModule3Steps: Step[] = [
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'Zero error values; all formulas resolve correctly; no broken references or external links',
+          'Zero error values; all formulas resolve correctly; no broken references, external links, or data vendor formulas',
           'Any error values present (#REF, #DIV/0, #N/A, #NUM); broken references; reliance on external links that do not resolve',
         ],
       ],
@@ -28,19 +63,19 @@ export const reviewerModule3Steps: Step[] = [
     },
     callout: {
       type: 'warning',
-      text: 'Auto-checks will often pre-flag error values and external link dependencies. Use these flags as a starting point, but always verify by opening the workbook yourself.',
+      text: 'Auto-checks will pre-flag error values and external link dependencies. Use these flags as a starting point, but always verify by opening the workbook yourself.',
     },
   },
   {
     type: 'content',
     id: 'r3-formula-quality',
-    title: 'Checklist Item 2: Formula Quality',
+    title: 'Checklist Item 2: High-Quality Formulas',
     body: 'Formula Quality evaluates whether the spreadsheet uses dynamic, auditable formulas with clearly separated assumptions — or relies on hardcoded values embedded directly in calculations. A well-built model should be fully auditable, with every input traceable to a labeled assumption.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'Dynamic formulas with clearly separated assumptions; no hardcoded values in calculations; fully auditable',
+          'Dynamic formulas with clearly separated assumptions; minimal or no hardcoded values in calculations; fully auditable',
           'Hardcoded values embedded in formulas (e.g., =B5/(1+0.10)^A5 instead of referencing an input cell); unclear separation of inputs and assumptions; overly complex formulas that are difficult to audit',
         ],
       ],
@@ -64,7 +99,7 @@ export const reviewerModule3Steps: Step[] = [
   {
     type: 'content',
     id: 'r3-formatting',
-    title: 'Checklist Item 3: Formatting',
+    title: 'Checklist Item 3: Acceptable Formatting & Presentation',
     body: 'Formatting assesses whether the spreadsheet looks professional, is easy to read, and uses consistent conventions throughout. A clean, well-formatted model signals rigor and attention to detail.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
@@ -83,7 +118,7 @@ export const reviewerModule3Steps: Step[] = [
           rows: [
             [
               'Currency in $#,##0; percentages in 0.0%; consistent Arial 10pt; section headers bolded and bordered',
-              'Some cells show 0.156, others 15.6%, others 16%; fonts vary between Calibri, Arial, and Times; no borders',
+              'Some cells show 0.156, others 15.6%, others 16%; fonts vary between Calibri, Arial, and Times; no clear visual hierarchy',
             ],
           ],
           columnStyles: { 0: 'good', 1: 'bad' },
@@ -94,14 +129,14 @@ export const reviewerModule3Steps: Step[] = [
   {
     type: 'content',
     id: 'r3-progression',
-    title: 'Checklist Item 4: Input-to-Output',
-    body: 'Input-to-Output checks whether the input and output form a logical, realistic sequence — where the output represents a natural next iteration of the model. The change should be analytically meaningful and follow a logical prerequisite chain.',
+    title: 'Checklist Item 4: Realistic Input-to-Output Progression',
+    body: 'Input-to-Output checks whether the input and output form a logical, realistic sequence — where the output represents a natural next iteration of the model. Downstream dependencies should be properly handled if a section is removed from a model.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'Input and output form a realistic progression; the output represents the logical next iteration of the model with meaningful analytical additions',
-          'No logical relationship between input and output; purely cosmetic changes; output skips logical prerequisite steps; or output is just links to existing data with no new analysis',
+          'Input and output form a realistic progression; the output represents the logical next iteration of the model with meaningful analytical additions; no pre-linked blank cells or hardcoded dependencies',
+          'No logical relationship between input and output; purely cosmetic changes; input workbook represents an unrealistic state of the model',
         ],
       ],
       columnStyles: { 0: 'good', 1: 'bad' },
@@ -113,7 +148,7 @@ export const reviewerModule3Steps: Step[] = [
           rows: [
             [
               'Operating model (input) adds a DCF valuation tab with WACC, terminal value, and implied share price (output)',
-              'Operating model (input) output is a returns sensitivity analysis but transaction model is not built out — skips prerequisite steps',
+              'Task is building a returns waterfall, but input workbook contains a hardcoded returns sensitvity table',
             ],
           ],
           columnStyles: { 0: 'good', 1: 'bad' },
@@ -128,75 +163,57 @@ export const reviewerModule3Steps: Step[] = [
     pairs: [
       {
         term: 'Data Integrity',
-        definition: 'No error values, broken references, or external link dependencies',
+        definition: 'No error values, external link dependencies, or data vendor formulas',
       },
       {
-        term: 'Formula Quality',
-        definition: 'Dynamic, auditable formulas with clearly separated assumptions — no hardcoded values',
+        term: 'High-Quality Formulas',
+        definition: 'Dynamic, auditable formulas with clearly separated assumptions — minimal or no hardcoded values',
       },
       {
-        term: 'Formatting',
+        term: 'Acceptable Formatting & Presentation',
         definition: 'Professional, consistent number formats, fonts, alignment, and presentation',
       },
       {
-        term: 'Input-to-Output',
-        definition: 'Input and output form a logical progression with meaningful analytical additions',
+        term: 'Realistic Input-to-Output Progression',
+        definition: 'Input and output form a logical progression with meaningful analytical additions; downstream dependencies are deleted or replaced with placeholder values',
       },
     ],
   },
   {
     type: 'scenario',
     id: 'r3-scenario-formula',
-    scenario: 'You open the output workbook and notice that the WACC calculation section has the discount rate typed directly into the DCF formula as =B10/(1+0.085)^A10. The cost of equity and cost of debt are also hardcoded within formulas rather than referenced from a labeled assumptions section. However, all formulas resolve without errors and the final valuation output appears reasonable.',
-    question: 'How would you mark the Formula Quality checklist item?',
+    scenario: 'You open the output workbook and notice that the present value calculation section has the discount rate typed directly into the DCF formula as =B10/(1+0.085)^A10. The cost of equity and cost of debt are also hardcoded within formulas rather than referenced from a labeled assumptions section. However, all formulas resolve without errors and the final valuation output appears reasonable.',
+    question: 'How would you mark the High Quality Formulas checklist item?',
     options: [
-      'Yes — all formulas resolve correctly and the output is reasonable',
-      'Yes — the hardcoded values are minor since the overall model works',
-      'No — the output is unreasonable',
-      'No — hardcoded values are embedded in formulas with no separation of assumptions, making the model difficult to audit',
+      'Checked — all formulas resolve correctly and the output is reasonable',
+      'Checked — the hardcoded values are minor since the overall model works',
+      'Unchecked — the input-to-output progression is unrealistic',
+      'Unchecked — hardcoded values are embedded in formulas with no separation of assumptions, making the model difficult to audit',
     ],
     correctIndex: 3,
     explanation: 'This is a clear No on Formula Quality. Multiple key assumptions (discount rate, cost of equity, cost of debt) are hardcoded directly inside formulas rather than referenced from labeled input cells. This makes the model difficult to audit — you cannot easily trace or change assumptions. The fact that formulas resolve without errors is checked by Data Integrity, not Formula Quality.',
   },
   {
     type: 'scenario',
-    id: 'r3-scenario-cosmetic',
-    scenario: 'You are reviewing a task where the input workbook contains a fully built operating model. The output workbook adds a tab that reformats the income statement headers and changes the font from Calibri to Arial across all tabs. No new analysis, calculations, or analytical content has been added.',
-    question: 'How would you mark Input-to-Output?',
+    id: 'r3-scenario-progression',
+    scenario: 'You are reviewing a task where the input workbook contains a fully built operating model with a partial LBO transaction tab built out. The input workbook contains a summary tab with the sponsor IRR and MOIC hardcoded. The spreadsheet task is to finish the LBO model by building in an exit valuation and returns waterfall section.',
+    question: 'Is this a realistic input-to-output progression?',
     options: [
-      'Yes — formatting improvements are a valid progression',
-      'No — purely cosmetic changes with no meaningful analytical progression from input to output',
-      'Yes — the output is clearly different from the input',
-      'No — but only because the formatting changes are inconsistent',
+      'Yes — the task makes sense given the returns section is the last piece of analysis to finish an LBO model',
+      'No — the hardcoded values on the summary tab should be deleted in the input workbook',
     ],
     correctIndex: 1,
-    explanation: 'This is No on Input-to-Output. Reformatting headers and changing fonts are purely cosmetic changes with no meaningful analytical progression. The output must represent a logical next iteration of the model with genuine analytical additions — not just visual changes.',
-  },
-  {
-    type: 'scenario',
-    id: 'r3-scenario-progression',
-    scenario: 'You are reviewing a task where the input workbook contains a basic operating model with revenue and expense projections. The output workbook adds a returns sensitivity analysis showing IRR across various entry multiples and leverage ratios. However, the operating model has no transaction structure — there is no purchase price, no sources and uses, and no debt schedule. The sensitivity analysis references a transaction tab that does not exist.',
-    question: 'How would you mark Input-to-Output?',
-    options: [
-      'No — the output skips logical prerequisite steps (the transaction structure must be built before a returns sensitivity analysis can work)',
-      'Yes — the sensitivity analysis is a valuable analytical addition',
-      'Yes — the intent is clear even if there are minor structural issues',
-      'No — the sensitivity analysis is not a useful output',
-    ],
-    correctIndex: 0,
-    explanation: 'This is No on Input-to-Output. A returns sensitivity analysis requires prerequisite steps that have not been built — specifically the transaction structure (purchase price, sources and uses, debt schedule). The output skips a logical prerequisite step, and the sensitivity analysis references a tab that does not exist. The intent may be clear, but the execution breaks the logical chain.',
+    explanation: 'This is No on Input-to-Output. The input workbook represents an unrealistic state of the model, where returns metrics are somehow known without a finished returns section built into the LBO tab. The LLM is provided with a hint about the exact IRR and MOIC metrics the new section should return',
   },
   {
     type: 'multiple-choice',
     id: 'r3-quiz-error-values',
-    question: 'A spreadsheet has no critical errors (#REF, #DIV/0) but shows a few #N/A values in cells that are part of a VLOOKUP reference table used for optional commentary fields. How would you mark Data Integrity?',
+    question: 'A spreadsheet has no #REF errors but shows a few #DIV/0 values in cells that are part of a summary tab. How would you mark Data Integrity?',
     options: [
-      'No — any error values (#N/A included) mean the spreadsheet fails Data Integrity',
-      'Yes — the errors are in non-essential cells and do not affect calculations',
-      'Yes — #N/A errors are not real errors',
-      'No — but only because VLOOKUP should be replaced with INDEX/MATCH',
+      'Unchecked — any error values (#DIV/0 included) mean the spreadsheet fails Data Integrity',
+      'Checked — the errors are in non-core tab and do not affect calculations',
     ],
     correctIndex: 0,
-    explanation: '#N/A values are error values. The Data Integrity checklist item is binary: any error values present means the item is marked No. It does not matter whether they are in essential or non-essential cells — the standard is zero error values. The contributor should fix the VLOOKUP to handle missing values (e.g., with IFERROR) before the task can pass.',
+    explanation: '#DIV/0 values are error values. The Data Integrity checklist item is binary: any error values present means the item is not satisfied — it does not matter whether they are in essential or non-essential analyses.',
   },
 ];

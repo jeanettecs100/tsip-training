@@ -5,22 +5,22 @@ export const reviewerModule4Steps: Step[] = [
     type: 'content',
     id: 'r4-intro',
     title: 'Evaluating Prompts',
-    body: 'The prompt is the foundation of every task. A well-written prompt mirrors a realistic request that a banker or analyst would actually make — it gives enough context, data, and structure for a model to be built without guesswork. You will evaluate prompts using a five-item yes/no checklist.',
+    body: 'The prompt is the foundation of every task. A well-written prompt mirrors a realistic request that a finance professional would actually make — it gives enough context, data, and structural guidance for a model to be built without guesswork. You will evaluate prompts using a five-item checklist.',
     callout: {
       type: 'info',
-      text: 'A prompt that fails any checklist item cannot produce a high-quality task. If the prompt is weak, the entire task needs rework.',
+      text: 'A prompt that fails any checklist item cannot produce a high-quality task. Every required component — context, inputs, and desired outputs and structure — must be present for the task to effectively be completed.',
     },
   },
   {
     type: 'content',
     id: 'r4-context',
     title: 'Checklist Item 1: Context & Analytical Objective',
-    body: 'This item checks whether the prompt explains why the analysis is being done. The reader should understand what decision or analysis the model supports and why it matters — not just what to build.',
+    body: 'This item checks whether the prompt explains why the analysis is being done. The explanation can be brief but the reader must understand the goal of the task.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'Clear reason for the model; reader understands what decision or analysis this supports and why it matters',
+          'Clear reason for the model; reader understands the goal of the task',
           'No context provided; jumps directly into requirements without explaining why; or boilerplate explanation where the reader must infer the purpose',
         ],
       ],
@@ -33,7 +33,7 @@ export const reviewerModule4Steps: Step[] = [
           rows: [
             [
               '"We\'re evaluating an add-on acquisition in the HVAC distribution space and need to see if it\'s accretive to our fund..."',
-              '"Create an accretion/dilution model for an M&A transaction with the following inputs..."',
+              '"Here are the inputs..."',
             ],
           ],
           columnStyles: { 0: 'good', 1: 'bad' },
@@ -42,7 +42,7 @@ export const reviewerModule4Steps: Step[] = [
       {
         callout: {
           type: 'tip',
-          text: 'A strong context sounds like something a VP would say in a meeting: specific industry, specific purpose, specific stakes. A weak context reads like a textbook exercise.',
+          text: 'A strong context section orients you to the task at hand. It can be a single sentence while still providing clarity on the purpose and goal of the new analysis.',
         },
       },
     ],
@@ -87,13 +87,13 @@ export const reviewerModule4Steps: Step[] = [
     type: 'content',
     id: 'r4-outputs',
     title: 'Checklist Item 3: Outputs Specified',
-    body: 'This item checks whether the prompt clearly defines what the finished product should look like — what outputs to produce, how they should be formatted, and how they relate to each other.',
+    body: 'This item checks whether the prompt clearly defines what the finished product should look like — what the key outputs are and how to achieve them.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'All outputs explicitly listed with definitions; reader knows exactly what the finished product includes',
-          'Vague output requirements; or calculated values provided in the prompt (red flag — means the model builder could hardcode the answer rather than deriving it through formulas)',
+          'All outputs explicitly listed and reader knows what the finished product includes',
+          'Vague output requirements; or calculated values provided in the prompt (red flag — means the LLM has hints or could hardcode the answer rather than deriving it through formulas)',
         ],
       ],
       columnStyles: { 0: 'good', 1: 'bad' },
@@ -114,7 +114,7 @@ export const reviewerModule4Steps: Step[] = [
       {
         callout: {
           type: 'danger',
-          text: 'Providing calculated values (e.g., "the IRR should be 14.2%") in the prompt is a red flag. It means the model builder could hardcode the answer rather than deriving it. Mark Outputs Specified as No if calculated values are given.',
+          text: 'Providing calculated values (e.g., "the IRR should be 14.2%") in the prompt gives the LLM hints about the desired outputs of the new analysis. Do not approve this checklist item if calculated values are given.',
         },
       },
     ],
@@ -123,12 +123,12 @@ export const reviewerModule4Steps: Step[] = [
     type: 'content',
     id: 'r4-structure',
     title: 'Checklist Item 4: Structure & Logic',
-    body: 'This item evaluates whether the prompt gives enough guidance on how the analysis should be organized — the layout, visual hierarchy, and calculation flow — without overspecifying the actual formulas.',
+    body: 'This item evaluates whether the prompt gives enough guidance on how the analysis should be organized — the layout and calculation flow — without overspecifying exact cell locations or Excel formulas.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
-          'Structure of the analysis is clearly outlined, providing enough info to recreate visual hierarchy and calculation logic',
+          'Structure of the analysis is clearly outlined, providing enough info to recreate the necessary sections and calculation logic',
           'No indication of how the analysis should be structured (too vague); OR exact formulas, cell references, or row positions are dictated (overspecified)',
         ],
       ],
@@ -161,13 +161,13 @@ export const reviewerModule4Steps: Step[] = [
     type: 'content',
     id: 'r4-style',
     title: 'Checklist Item 5: Prompt Style',
-    body: 'This item assesses the writing quality and authenticity of the prompt. It should read like a natural human request — the kind of message you would actually send to a colleague or analyst.',
+    body: 'This item assesses the writing quality and authenticity of the prompt. It should read like a natural human request with a conversational tone.',
     table: {
       headers: ['Criteria is met when', 'Criteria is not met when'],
       rows: [
         [
           'Clear, direct language with natural tone; reads like a real person wrote it',
-          'Clearly LLM-generated or robotic; uses meta-language, overly structured formatting, or obvious AI patterns',
+          'Clearly LLM-generated or robotic; repetitive phrasing patterns',
         ],
       ],
       columnStyles: { 0: 'good', 1: 'bad' },
@@ -179,7 +179,7 @@ export const reviewerModule4Steps: Step[] = [
           rows: [
             [
               '"I need to compare leasing vs buying our new warehouse equipment. We\'re looking at a $450K forklift fleet..."',
-              '"Create a lease vs. buy analysis spreadsheet. Input fields required: Asset cost, Lease payment..."',
+              '"Create a lease vs. buy analysis spreadsheet. Input fields required (blue hardcodes): Asset cost, Lease payment..."',
             ],
           ],
           columnStyles: { 0: 'good', 1: 'bad' },
@@ -200,7 +200,7 @@ export const reviewerModule4Steps: Step[] = [
     pairs: [
       {
         term: 'Context & Analytical Objective',
-        definition: 'Explains why the analysis is being done and what decision it supports',
+        definition: 'Explains the purpose and goal of the analysis',
       },
       {
         term: 'Assumptions & Input Data',
@@ -208,7 +208,7 @@ export const reviewerModule4Steps: Step[] = [
       },
       {
         term: 'Outputs Specified',
-        definition: 'Defines what the finished product includes — outputs, formats, and relationships',
+        definition: 'Defines what the finished product includes — outputs and required logic',
       },
       {
         term: 'Structure & Logic',
@@ -223,16 +223,16 @@ export const reviewerModule4Steps: Step[] = [
   {
     type: 'scenario',
     id: 'r4-scenario-context',
-    scenario: 'You are reviewing a prompt that reads: "Build a three-statement financial model for Company X. The model should include an income statement, balance sheet, and cash flow statement with projections for 5 years. Use the provided historical data."',
+    scenario: 'You are reviewing a prompt that begins with: "Here\'s the historical data for the Company X income statement:"',
     question: 'How would you mark Context & Analytical Objective?',
     options: [
-      'Yes — the prompt clearly describes what to build',
-      'Yes — the prompt mentions Company X which provides context',
-      'No — the prompt is too short',
-      'No — the prompt tells the reader what to build but not why; there is no business context, decision, or purpose',
+      'Checked — clear description of what to build',
+      'Checked — the mention of Company X provides context',
+      'Unchecked — the introduction is too short',
+      'Unchecked — there is no business context, decision, or purpose',
     ],
     correctIndex: 3,
-    explanation: 'This prompt describes what to build (a three-statement model) but gives no indication of why. There is no mention of a transaction, investment decision, or business scenario. The reader must infer the purpose entirely. Context & Analytical Objective requires that the prompt explain the business reason behind the analysis.',
+    explanation: 'This prompt jumps right into providing input data. There is no mention of a transaction, investment decision, or business scenario. The reader must infer the purpose entirely. Context & Analytical Objective requires that the prompt explain the business reason behind the analysis.',
   },
   {
     type: 'scenario',
@@ -240,13 +240,13 @@ export const reviewerModule4Steps: Step[] = [
     scenario: 'A prompt includes: "Build a revenue build tab. Row 1 should be Units Sold. Row 2 should be Price Per Unit (=Units Sold * Average Selling Price). Row 3 should be Total Revenue (=SUM of Row 2 across all segments). Use the formula =VLOOKUP to pull historical pricing from the Data tab."',
     question: 'How would you mark Structure & Logic?',
     options: [
-      'No — the prompt overspecifies formula logic, dictating exact row positions, formulas, and functions, reducing the task to data entry',
-      'Yes — the prompt provides detailed structural guidance',
-      'Yes — specifying formulas ensures consistency',
-      'No — the prompt is too long',
+      'Unchecked — the prompt overspecifies formula logic, dictating exact row positions, formulas, and functions, reducing the task to data entry',
+      'Checked — the prompt provides detailed structural guidance',
+      'Checked — specifying formulas ensures consistency',
+      'Unchecked — the prompt is too long',
     ],
     correctIndex: 0,
-    explanation: 'This prompt overspecifies by dictating exact row positions, specific formulas (=SUM, =VLOOKUP), and cell references. This reduces the task to data entry rather than testing whether the model builder can structure the analysis themselves. Structure & Logic should describe the layout and flow without dictating implementation details.',
+    explanation: 'This prompt overspecifies by dictating exact row positions, specific formulas (=SUM, =VLOOKUP), and cell references. This reduces the task to data entry rather than testing whether the model builder can structure the analysis themselves.',
   },
   {
     type: 'multiple-choice',
@@ -256,22 +256,22 @@ export const reviewerModule4Steps: Step[] = [
       'The prompt uses industry-specific jargon and abbreviations',
       'The prompt references a specific company and transaction context',
       'The prompt uses casual language like "hey, can you throw together a quick model"',
-      'The prompt includes a bulleted list titled "Input fields required" followed by structured key-value pairs',
+      'The prompt includes the text: "Certainly! Input fields required:" followed by structured key-value pairs',
     ],
     correctIndex: 3,
-    explanation: 'Structured lists titled "Input fields required" with key-value formatting are a hallmark of LLM-generated prompts. Real analysts communicate in natural prose with conversational context. Industry jargon, specific company references, and casual tone are all indicators of authentic human writing.',
+    explanation: 'Option D is clearly a pasted response from an LLM conversation. Industry jargon, specific company references, and casual tone are all indicators of authentic human writing.',
   },
   {
     type: 'multiple-choice',
     id: 'r4-quiz-assumptions',
-    question: 'A prompt asks the model builder to "add a DCF analysis" but does not specify the discount rate, terminal growth rate, or projection period. How would you mark Assumptions & Input Data?',
+    question: 'A prompt instructs to add a DCF analysis with an 8.5% WACC, 2.5% terminal growth rate, and 5-year projection period. How would you mark Assumptions & Input Data?',
     options: [
-      'No — the discount rate, terminal growth rate, and projection period are fundamental inputs for a DCF; without them the model builder would need to guess',
-      'Yes — the general task is defined which is sufficient',
-      'Yes — these are standard assumptions that any analyst would know',
-      'No — but only because the prompt does not mention which company',
+      'Checked — the prompt clearly states the assumed values for the fundamental inputs for a DCF',
+      'Checked — the general task is defined which is sufficient',
+      'Unchecked — the LLM is provided with hints for calculated values',
+      'Unchecked — the prompt does not mention which company',
     ],
     correctIndex: 0,
-    explanation: 'The discount rate, terminal growth rate, and projection period are fundamental inputs for a DCF. Without them, the model builder must guess, creating ambiguity in both the output and the rubric. Assumptions & Input Data requires that all values needed to build the model are explicitly provided.',
+    explanation: 'The Assumptions & Input Data criterion is satisfied. The prompt explicitly provides values for the key assumptions driving the analysis — discount rate, terminal growth rate, and projection period.',
   },
 ];

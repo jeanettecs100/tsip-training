@@ -18,7 +18,7 @@ export type StepType =
 export interface ContentTable {
   headers: string[];
   rows: string[][];
-  columnStyles?: Record<number, 'good' | 'bad'>;
+  columnStyles?: Record<number, 'good' | 'bad' | 'bold'>;
   columnWidths?: string[];
 }
 
@@ -57,6 +57,7 @@ export interface ContentSection {
   callout?: ContentCallout;
   exampleFiles?: ExampleFile[];
   annotatedExample?: AnnotatedExample;
+  collapsible?: boolean;
 }
 
 export interface ContentStep {
@@ -68,7 +69,7 @@ export interface ContentStep {
   table?: ContentTable;
   numberedList?: NumberedList;
   callout?: ContentCallout;
-  note?: string;
+  note?: string | { body: string; table: ContentTable };
   exampleFiles?: ExampleFile[];
   annotatedExample?: AnnotatedExample;
   sections?: ContentSection[];

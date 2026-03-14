@@ -40,6 +40,7 @@ export function TrainingHome({ onStartTraining, onStartReviewerTraining }: Train
     const valid = await verifyPassword(contributorPassword, 'contributor');
     setContributorLoading(false);
     if (valid) {
+      localStorage.setItem('tsip-contributor-unlocked', 'true');
       onStartTraining();
     } else {
       setContributorError(true);
@@ -52,6 +53,7 @@ export function TrainingHome({ onStartTraining, onStartReviewerTraining }: Train
     const valid = await verifyPassword(reviewerPassword, 'reviewer');
     setReviewerLoading(false);
     if (valid) {
+      localStorage.setItem('tsip-reviewer-unlocked', 'true');
       onStartReviewerTraining();
     } else {
       setReviewerError(true);

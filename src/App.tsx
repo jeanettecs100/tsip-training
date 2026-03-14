@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import { Toaster } from '@/components/ui/sonner';
 import { CompletionScreen } from '@/components/training/CompletionScreen';
@@ -8,11 +8,17 @@ import { ReviewerTraining } from '@/components/training/ReviewerTraining';
 
 function ContributorComplete() {
   const navigate = useNavigate();
+  if (localStorage.getItem('tsip-contributor-unlocked') !== 'true') {
+    return <Navigate to="/" replace />;
+  }
   return <CompletionScreen onReviewModules={() => navigate('/contributor')} />;
 }
 
 function ReviewerComplete() {
   const navigate = useNavigate();
+  if (localStorage.getItem('tsip-reviewer-unlocked') !== 'true') {
+    return <Navigate to="/" replace />;
+  }
   return <CompletionScreen onReviewModules={() => navigate('/reviewer')} />;
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 import { MODULES as CONTRIBUTOR_MODULES } from './data/modules-config';
 import { ExamplesPanel } from './ExamplesPanel';
@@ -11,6 +11,10 @@ import { TrainingSidebar } from './TrainingSidebar';
 export function ContributorTraining() {
   const navigate = useNavigate();
   const contributor = useTrainingProgress();
+
+  if (localStorage.getItem('tsip-contributor-unlocked') !== 'true') {
+    return <Navigate to="/" replace />;
+  }
   const [showExamples, setShowExamples] = useState(false);
 
   const steps = getModuleSteps(contributor.viewingModule);

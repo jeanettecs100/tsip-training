@@ -90,7 +90,7 @@ export function useReviewerTrainingProgress() {
                 prev.currentModule,
               ] as ModuleId[]);
 
-          if (prev.currentModule < 7) {
+          if (prev.currentModule < 6) {
             const nextModule = (prev.currentModule + 1) as ModuleId;
             return {
               ...prev,
@@ -102,13 +102,13 @@ export function useReviewerTrainingProgress() {
             return {
               ...prev,
               completedModules,
-              currentModule: 7 as ModuleId,
+              currentModule: 6 as ModuleId,
               currentStepIndex: totalSteps - 1,
             };
           }
         });
 
-        if (progress.currentModule < 7) {
+        if (progress.currentModule < 6) {
           const nextModule = (progress.currentModule + 1) as ModuleId;
           setViewingModule(nextModule);
           setViewingStepIndex(0);
@@ -211,7 +211,7 @@ export function useReviewerTrainingProgress() {
     setViewingStepIndex(0);
   }, [updateProgress]);
 
-  const isAllComplete = progress.completedModules.length === 7;
+  const isAllComplete = progress.completedModules.length === 6;
 
   return {
     progress,

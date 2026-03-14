@@ -2,6 +2,7 @@ import { Download, Eye, FileXls } from '@phosphor-icons/react';
 import { Info, Lightbulb, Warning, WarningOctagon } from '@phosphor-icons/react';
 import { useEffect,useState } from 'react';
 
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -79,6 +80,10 @@ const COLUMN_STYLE_CLASSES = {
     header: 'bg-rose-50 text-rose-800',
     cell: 'bg-rose-50/50 text-rose-800',
   },
+  bold: {
+    header: '',
+    cell: 'font-semibold text-foreground',
+  },
 };
 
 function renderTable(table: ContentTable) {
@@ -125,7 +130,11 @@ function renderTable(table: ContentTable) {
                       colStyle && COLUMN_STYLE_CLASSES[colStyle].cell
                     )}
                   >
-                    {cell}
+                    {cell.startsWith('✓ ') ? (
+                      <span className='text-emerald-600'>✓ {cell.slice(2)}</span>
+                    ) : cell.startsWith('✗ ') ? (
+                      <span className='text-red-500'>✗ {cell.slice(2)}</span>
+                    ) : cell}
                   </td>
                 );
               })}
@@ -325,6 +334,9 @@ function renderSection(
 export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCardProps) {
   const [acknowledged, setAcknowledged] = useState(!!isAlreadyCompleted);
   const [interactedFiles, setInteractedFiles] = useState<Set<string>>(new Set());
+  const [viewedCollapsible, setViewedCollapsible] = useState<Set<number>>(new Set());
+
+  const collapsibleCount = step.sections?.filter(s => s.collapsible).length ?? 0;
 
   useEffect(() => {
     if (isAlreadyCompleted) {
@@ -334,6 +346,7 @@ export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCar
       setAcknowledged(false);
     }
     setInteractedFiles(new Set());
+    setViewedCollapsible(new Set());
   }, [step.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAcknowledge = () => {
@@ -345,13 +358,22 @@ export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCar
     setInteractedFiles(prev => new Set([...prev, fileUrl]));
   };
 
+  const handleAccordionChange = (value: string) => {
+    if (value) {
+      const idx = parseInt(value.replace('item-', ''), 10);
+      setViewedCollapsible(prev => new Set([...prev, idx]));
+    }
+  };
+
   // Collect all example files (top-level and in sections)
   const allExampleFiles: ExampleFile[] = [
     ...(step.exampleFiles || []),
     ...(step.sections?.flatMap(s => s.exampleFiles || []) || []),
   ];
 
-  const checkboxDisabled = allExampleFiles.length > 0 && interactedFiles.size < allExampleFiles.length;
+  const filesNotViewed = allExampleFiles.length > 0 && interactedFiles.size < allExampleFiles.length;
+  const collapsibleNotViewed = collapsibleCount > 0 && viewedCollapsible.size < collapsibleCount;
+  const checkboxDisabled = filesNotViewed || collapsibleNotViewed;
 
   return (
     <Card>
@@ -373,14 +395,57 @@ export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCar
         {step.annotatedExample && renderAnnotatedExample(step.annotatedExample)}
         {step.callout && renderCallout(step.callout)}
 
+        {(() => {
+          const sections = step.sections;
+          if (!sections) return null;
+          const hasCollapsible = sections.some(s => s.collapsible);
+          if (!hasCollapsible) {
+            return sections.map((section, i) =>
+              renderSection(section, `section-${i}`, handleFileInteracted)
+            );
+          }
+          // Split into non-collapsible (rendered normally) and collapsible (rendered in accordion)
+          const nonCollapsible = sections.filter(s => !s.collapsible);
+          const collapsible = sections.filter(s => s.collapsible);
+          return (
+            <>
+              {nonCollapsible.map((section, i) =>
+                renderSection(section, `section-nc-${i}`, handleFileInteracted)
+              )}
+              <Accordion type="single" collapsible className="rounded-lg border" onValueChange={handleAccordionChange}>
+                {collapsible.map((section, i) => (
+                  <AccordionItem key={i} value={`item-${i}`}>
+                    <AccordionTrigger className="px-4">
+                      {section.body || `Section ${i + 1}`}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4">
+                      <div className="space-y-4">
+                        {section.bullets && renderBullets(section.bullets)}
+                        {section.table && renderTable(section.table)}
+                        {section.numberedList && renderNumberedList(section.numberedList)}
+                        {section.callout && renderCallout(section.callout)}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </>
+          );
+        })()}
+
         {step.note && (
           <div className='rounded-lg border border-violet-200 bg-violet-50 p-4'>
-            <p className='text-sm leading-relaxed text-violet-900'>{step.note}</p>
+            {typeof step.note === 'string' ? (
+              <p className='whitespace-pre-line text-sm leading-relaxed text-violet-900'>{step.note}</p>
+            ) : (
+              <>
+                <p className='mb-3 text-sm font-semibold text-violet-900'>{step.note.body}</p>
+                <div className='overflow-hidden rounded-lg bg-white'>
+                  {renderTable(step.note.table)}
+                </div>
+              </>
+            )}
           </div>
-        )}
-
-        {step.sections?.map((section, i) =>
-          renderSection(section, `section-${i}`, handleFileInteracted)
         )}
 
         <label
@@ -403,7 +468,7 @@ export function ContentCard({ step, onComplete, isAlreadyCompleted }: ContentCar
           </span>
           {checkboxDisabled && (
             <span className='ml-auto text-xs text-muted-foreground'>
-              View or download the example files first
+              {collapsibleNotViewed ? 'Expand and view all sections first' : 'View or download the example files first'}
             </span>
           )}
         </label>

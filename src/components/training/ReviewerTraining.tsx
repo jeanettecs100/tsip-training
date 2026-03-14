@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 import { REVIEWER_MODULES } from './data/reviewer/r-modules-config';
 import { ModuleViewer, type ModuleWeight } from './ModuleViewer';
@@ -12,13 +12,16 @@ const REVIEWER_MODULE_WEIGHTS: ModuleWeight[] = [
   { id: 3, title: 'Evaluating Spreadsheets', weight: 0.05 },
   { id: 4, title: 'Evaluating Prompts', weight: 0.05 },
   { id: 5, title: 'Evaluating Rubrics', weight: 0.05 },
-  { id: 6, title: 'Providing Feedback', weight: 0.05 },
-  { id: 7, title: 'Final Assessment', weight: 0.70 },
+  { id: 6, title: 'Final Assessment', weight: 0.75 },
 ];
 
 export function ReviewerTraining() {
   const navigate = useNavigate();
   const reviewer = useReviewerTrainingProgress();
+
+  if (localStorage.getItem('tsip-reviewer-unlocked') !== 'true') {
+    return <Navigate to="/" replace />;
+  }
 
   const reviewerSteps = getReviewerModuleSteps(reviewer.viewingModule);
   const reviewerModuleConfig = REVIEWER_MODULES.find(m => m.id === reviewer.viewingModule);
@@ -45,8 +48,8 @@ export function ReviewerTraining() {
           currentStepIndex={reviewer.viewingStepIndex}
           maxStepIndex={reviewer.isViewingReview ? reviewerSteps.length - 1 : reviewer.progress.currentStepIndex}
           isReviewMode={reviewer.isViewingReview}
-          isLastModule={reviewer.viewingModule === 7}
-          isFinalAssessment={reviewer.viewingModule === 7}
+          isLastModule={reviewer.viewingModule === 6}
+          isFinalAssessment={reviewer.viewingModule === 6}
           storageKeyPrefix='tsip-reviewer'
           moduleWeights={REVIEWER_MODULE_WEIGHTS}
           onAdvance={reviewer.advanceStep}

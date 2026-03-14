@@ -38,13 +38,6 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
   },
   {
     id: 6,
-    title: 'Providing Feedback',
-    description:
-      'Learn to write clear, actionable feedback that helps contributors improve their work.',
-    iconName: 'Trophy',
-  },
-  {
-    id: 7,
     title: 'Final Assessment',
     description:
       'Put your reviewer knowledge to the test with a comprehensive assessment.',
