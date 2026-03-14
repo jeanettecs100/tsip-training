@@ -144,7 +144,7 @@ export function TrainingHome({ onStartTraining, onStartReviewerTraining }: Train
                     Reviewer Training
                   </h2>
                   <p className='mt-0.5 text-sm text-muted-foreground'>
-                    7 modules covering evaluation criteria, feedback, workflow, and a final assessment
+                    6 modules covering evaluation criteria, workflow, and a final assessment
                   </p>
                 </div>
                 <Lock className='size-5 shrink-0 text-muted-foreground/50' />
