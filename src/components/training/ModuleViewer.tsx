@@ -865,7 +865,7 @@ function AssessmentResultsCard({
         <div className='space-y-2'>
           <p className='text-sm font-semibold text-foreground'>Score Breakdown</p>
           <div className='divide-y rounded-lg border'>
-            {rows.map(row => {
+            {rows.filter(row => row.weight > 0 || row.total > 0).map(row => {
               const pctRounded = Math.round(row.pct);
               const weightLabel = `${Math.round(row.weight * 100)}%`;
               return (
