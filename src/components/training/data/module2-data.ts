@@ -42,6 +42,10 @@ export const module2Steps: Step[] = [
         ],
       ],
     },
+    callout: {
+      type: 'warning',
+      text: 'Chart creation or editing is not in the current scope of spreadsheet tasks we are accepting. Tasks should focus on formula-driven analysis, not chart-based outputs.',
+    },
   },
   {
     type: 'content',
