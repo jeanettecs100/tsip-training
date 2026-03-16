@@ -186,6 +186,7 @@ export const module2Steps: Step[] = [
       '- Not too small — purely cosmetic changes or moving cells around do not qualify',
       '- Not too big — rebuilding an entire model end-to-end is over-scoped',
       '- Not disconnected — the change must logically follow from what already exists in the model',
+      '- Not out of scope — task is outside the scope of acceptable task types (e.g., chart creation, pivot tables, Excel macro workflows)',
     ],
   },
   {
