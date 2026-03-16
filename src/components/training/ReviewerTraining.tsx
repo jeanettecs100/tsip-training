@@ -7,12 +7,12 @@ import { getReviewerModuleSteps } from './steps/reviewer-index';
 import { TrainingSidebar } from './TrainingSidebar';
 
 const REVIEWER_MODULE_WEIGHTS: ModuleWeight[] = [
-  { id: 1, title: 'Introduction', weight: 0.05 },
+  { id: 1, title: 'Introduction', weight: 0 },
   { id: 2, title: 'Reviewer Workflow', weight: 0.05 },
   { id: 3, title: 'Evaluating Spreadsheets', weight: 0.05 },
   { id: 4, title: 'Evaluating Prompts', weight: 0.05 },
   { id: 5, title: 'Evaluating Rubrics', weight: 0.05 },
-  { id: 6, title: 'Final Assessment', weight: 0.75 },
+  { id: 6, title: 'Final Assessment', weight: 0.80 },
 ];
 
 export function ReviewerTraining() {
@@ -59,6 +59,9 @@ export function ReviewerTraining() {
           savedQuizAnswers={reviewer.getQuizAnswers(reviewer.viewingModule)}
           onSaveQuizAnswers={(answers) => reviewer.saveQuizAnswers(reviewer.viewingModule, answers)}
           getAllModuleScores={reviewer.getModuleScore}
+          getAllQuizAnswers={reviewer.getQuizAnswers}
+          onSaveQuizResults={(results) => reviewer.saveQuizResults(reviewer.viewingModule, results)}
+          getAllQuizResults={reviewer.getQuizResults}
           onTrainingComplete={() => navigate('/reviewer/complete')}
           onRetakeAssessment={() => reviewer.resetCurrentModule()}
         />

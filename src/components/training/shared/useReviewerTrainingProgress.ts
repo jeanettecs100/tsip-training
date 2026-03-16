@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { ModuleId, ModuleScore, ModuleStatus, QuizAnswerMap, TrainingProgress } from './types';
+import type { ModuleId, ModuleScore, ModuleStatus, QuizAnswerMap, QuizResultsMap, TrainingProgress } from './types';
 
 const STORAGE_KEY = 'tsip-reviewer-training-progress';
 
@@ -195,17 +195,40 @@ export function useReviewerTrainingProgress() {
     [progress]
   );
 
+  const saveQuizResults = useCallback(
+    (moduleId: ModuleId, results: QuizResultsMap) => {
+      updateProgress(prev => ({
+        ...prev,
+        moduleQuizResults: {
+          ...prev.moduleQuizResults,
+          [moduleId]: results,
+        },
+      }));
+    },
+    [updateProgress]
+  );
+
+  const getQuizResults = useCallback(
+    (moduleId: ModuleId): QuizResultsMap | undefined => {
+      return progress.moduleQuizResults?.[moduleId];
+    },
+    [progress]
+  );
+
   const resetCurrentModule = useCallback(() => {
     updateProgress(prev => {
       const newScores = { ...prev.moduleScores };
       delete newScores[prev.currentModule];
       const newAnswers = { ...prev.moduleQuizAnswers };
       delete newAnswers[prev.currentModule];
+      const newResults = { ...prev.moduleQuizResults };
+      delete newResults[prev.currentModule];
       return {
         ...prev,
         currentStepIndex: 0,
         moduleScores: newScores,
         moduleQuizAnswers: newAnswers,
+        moduleQuizResults: newResults,
       };
     });
     setViewingStepIndex(0);
@@ -227,6 +250,8 @@ export function useReviewerTrainingProgress() {
     saveModuleScore,
     saveQuizAnswers,
     getQuizAnswers,
+    saveQuizResults,
+    getQuizResults,
     resetCurrentModule,
     isAllComplete,
   };

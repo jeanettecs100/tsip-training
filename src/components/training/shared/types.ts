@@ -171,10 +171,13 @@ export interface ModuleScore {
 // Maps step ID → selected answer index (for MC/scenario) or -1 (for matching/ordering always-correct)
 export type QuizAnswerMap = Record<string, number>;
 
+export type QuizResultsMap = Record<string, boolean>;
+
 export interface TrainingProgress {
   completedModules: ModuleId[];
   currentModule: ModuleId;
   currentStepIndex: number;
   moduleScores?: Partial<Record<ModuleId, ModuleScore>>;
   moduleQuizAnswers?: Partial<Record<ModuleId, QuizAnswerMap>>;
+  moduleQuizResults?: Partial<Record<ModuleId, QuizResultsMap>>;
 }

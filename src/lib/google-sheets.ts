@@ -16,6 +16,8 @@ export interface ScoreSubmission {
   compositeScore: number;
   trainingType?: 'contributor' | 'reviewer';
   modules: ModuleScoreRow[];
+  allQuizAnswers?: Record<string, number>;
+  allQuizResults?: Record<string, boolean>;
   submittedAt: string;
 }
 

@@ -101,6 +101,9 @@ interface ModuleViewerProps {
   savedQuizAnswers?: QuizAnswerMap;
   onSaveQuizAnswers?: (answers: QuizAnswerMap) => void;
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
+  getAllQuizAnswers?: (id: ModuleId) => QuizAnswerMap | undefined;
+  onSaveQuizResults?: (results: Record<string, boolean>) => void;
+  getAllQuizResults?: (id: ModuleId) => Record<string, boolean> | undefined;
   onTrainingComplete?: () => void;
   onRetakeAssessment?: () => void;
 }
@@ -123,6 +126,9 @@ export function ModuleViewer({
   savedQuizAnswers,
   onSaveQuizAnswers,
   getAllModuleScores,
+  getAllQuizAnswers,
+  onSaveQuizResults,
+  getAllQuizResults,
   onTrainingComplete,
   onRetakeAssessment,
 }: ModuleViewerProps) {
@@ -227,6 +233,7 @@ export function ModuleViewer({
         const correct = quizStepIds.filter(id => quizResults[id] === true).length;
         onModuleComplete?.({ correct, total: quizSteps.length });
         onSaveQuizAnswers?.(quizAnswers);
+        onSaveQuizResults?.(quizResults);
         // Clean up in-progress localStorage keys
         try {
           localStorage.removeItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
@@ -240,6 +247,7 @@ export function ModuleViewer({
       const correct = quizStepIds.filter(id => quizResults[id] === true).length;
       onModuleComplete?.({ correct, total: quizSteps.length });
       onSaveQuizAnswers?.(quizAnswers);
+      onSaveQuizResults?.(quizResults);
       // Clean up in-progress localStorage keys
       try {
         localStorage.removeItem(`${storageKeyPrefix}-quiz-answers-${moduleId}`);
@@ -609,8 +617,11 @@ export function ModuleViewer({
             {currentStep.type === 'assessment-results' && (
               <AssessmentResultsCard
                 quizResults={quizResults}
+                quizAnswers={quizAnswers}
                 quizSteps={quizSteps}
                 getAllModuleScores={getAllModuleScores}
+                getAllQuizAnswers={getAllQuizAnswers}
+                getAllQuizResults={getAllQuizResults}
                 onComplete={handleStepComplete}
                 onScoreCalculated={setAssessmentComposite}
                 moduleWeights={moduleWeights ?? CONTRIBUTOR_MODULE_WEIGHTS}
@@ -687,8 +698,11 @@ const CONTRIBUTOR_MODULE_WEIGHTS: ModuleWeight[] = [
 
 interface AssessmentResultsCardProps {
   quizResults: Record<string, boolean>;
+  quizAnswers: QuizAnswerMap;
   quizSteps: Step[];
   getAllModuleScores?: (id: ModuleId) => ModuleScore | undefined;
+  getAllQuizAnswers?: (id: ModuleId) => QuizAnswerMap | undefined;
+  getAllQuizResults?: (id: ModuleId) => Record<string, boolean> | undefined;
   onComplete: () => void;
   onScoreCalculated?: (composite: number) => void;
   moduleWeights: ModuleWeight[];
@@ -699,8 +713,11 @@ interface AssessmentResultsCardProps {
 
 function AssessmentResultsCard({
   quizResults,
+  quizAnswers,
   quizSteps,
   getAllModuleScores,
+  getAllQuizAnswers,
+  getAllQuizResults,
   onComplete,
   onScoreCalculated,
   moduleWeights,
@@ -710,15 +727,18 @@ function AssessmentResultsCard({
 }: AssessmentResultsCardProps) {
   const submittedKey = `${storageKeyPrefix}-scores-submitted`;
 
-  // Compute module 7 score from local quiz state
-  const m7Correct = quizSteps.filter(s => quizResults[s.id] === true).length;
-  const m7Total = quizSteps.length;
-  const m7Pct = m7Total > 0 ? (m7Correct / m7Total) * 100 : 0;
+  // Find the final assessment module dynamically (highest weight)
+  const assessmentModuleId = moduleWeights.reduce((max, w) => w.weight > max.weight ? w : max).id;
+
+  // Compute final assessment score from local quiz state
+  const assessmentCorrect = quizSteps.filter(s => quizResults[s.id] === true).length;
+  const assessmentTotal = quizSteps.length;
+  const assessmentPct = assessmentTotal > 0 ? (assessmentCorrect / assessmentTotal) * 100 : 0;
 
   // Build per-module rows
   const rows = moduleWeights.map(({ id, title, weight }) => {
-    if (id === 7) {
-      return { id, title, weight, correct: m7Correct, total: m7Total, pct: m7Pct };
+    if (id === assessmentModuleId) {
+      return { id, title, weight, correct: assessmentCorrect, total: assessmentTotal, pct: assessmentPct };
     }
     const score = getAllModuleScores?.(id);
     const correct = score?.correct ?? 0;
@@ -736,6 +756,26 @@ function AssessmentResultsCard({
   useEffect(() => {
     onComplete();
     onScoreCalculated?.(compositeRounded);
+
+    // Collect all quiz answers and results across all modules
+    const allQuizAnswers: Record<string, number> = {};
+    const allQuizResults: Record<string, boolean> = {};
+    for (const { id } of moduleWeights) {
+      if (id === assessmentModuleId) {
+        // Use local state for current assessment module
+        Object.assign(allQuizAnswers, quizAnswers);
+        Object.assign(allQuizResults, quizResults);
+      } else {
+        const answers = getAllQuizAnswers?.(id);
+        if (answers) {
+          Object.assign(allQuizAnswers, answers);
+        }
+        const results = getAllQuizResults?.(id);
+        if (results) {
+          Object.assign(allQuizResults, results);
+        }
+      }
+    }
 
     // Submit scores to Google Sheets (once — localStorage flag survives StrictMode remounts)
     const alreadySubmitted = (() => { try { return localStorage.getItem(submittedKey) === 'true'; } catch { return false; } })();
@@ -755,6 +795,8 @@ function AssessmentResultsCard({
             percent: Math.round(r.pct),
             weight: r.weight,
           })),
+          allQuizAnswers,
+          allQuizResults,
           submittedAt: new Date().toISOString(),
         });
       }
