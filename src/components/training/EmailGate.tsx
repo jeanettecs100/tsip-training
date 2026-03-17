@@ -59,7 +59,7 @@ export function EmailGate({ onSubmit }: EmailGateProps) {
                 Welcome to TSIP Training
               </h1>
               <p className='text-sm text-muted-foreground'>
-                Enter your email address to begin. Your progress and scores will be tracked under this email.
+                Enter your TSIP email address to begin. Your progress and scores will be tracked under this email.
               </p>
             </div>
 
