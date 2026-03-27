@@ -161,6 +161,7 @@ export interface ModuleConfig {
   title: string;
   description: string;
   iconName: string;
+  slug: string;
 }
 
 export interface ModuleScore {

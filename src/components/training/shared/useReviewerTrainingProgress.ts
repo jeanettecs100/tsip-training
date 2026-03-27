@@ -26,14 +26,14 @@ function persistProgress(progress: TrainingProgress): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
-export function useReviewerTrainingProgress() {
+export function useReviewerTrainingProgress(initialModuleId?: ModuleId, initialStepIndex?: number) {
   const [progress, setProgress] = useState<TrainingProgress>(loadProgress);
 
   const [viewingModule, setViewingModule] = useState<ModuleId>(
-    progress.currentModule
+    initialModuleId ?? progress.currentModule
   );
   const [viewingStepIndex, setViewingStepIndex] = useState(
-    progress.currentStepIndex
+    initialStepIndex ?? (initialModuleId != null ? 0 : progress.currentStepIndex)
   );
 
   const updateProgress = useCallback(

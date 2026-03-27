@@ -30,8 +30,12 @@ export function App() {
         <Route path='/' element={<HomePage />} />
         <Route path='/contributor' element={<ContributorTraining />} />
         <Route path='/contributor/complete' element={<ContributorComplete />} />
+        <Route path='/contributor/:moduleSlug' element={<ContributorTraining />} />
+        <Route path='/contributor/:moduleSlug/:stepSlug' element={<ContributorTraining />} />
         <Route path='/reviewer' element={<ReviewerTraining />} />
         <Route path='/reviewer/complete' element={<ReviewerComplete />} />
+        <Route path='/reviewer/:moduleSlug' element={<ReviewerTraining />} />
+        <Route path='/reviewer/:moduleSlug/:stepSlug' element={<ReviewerTraining />} />
       </Routes>
     </>
   );

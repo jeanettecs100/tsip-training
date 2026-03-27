@@ -7,6 +7,7 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Understand the reviewer role, quality expectations, and what it means to uphold our standards.',
     iconName: 'RocketLaunch',
+    slug: 'introduction',
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Learn the step-by-step review process from claiming a task to submitting your evaluation.',
     iconName: 'Compass',
+    slug: 'reviewer-workflow',
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Learn the five yes/no checklist items used to evaluate spreadsheet quality.',
     iconName: 'Table',
+    slug: 'evaluating-spreadsheets',
   },
   {
     id: 4,
@@ -28,6 +31,7 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Learn the five yes/no checklist items used to evaluate prompt quality.',
     iconName: 'PencilSimple',
+    slug: 'evaluating-prompts',
   },
   {
     id: 5,
@@ -35,6 +39,7 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Learn the six yes/no checklist items used to evaluate rubric quality.',
     iconName: 'ListChecks',
+    slug: 'evaluating-rubrics',
   },
   {
     id: 6,
@@ -42,5 +47,6 @@ export const REVIEWER_MODULES: ModuleConfig[] = [
     description:
       'Put your reviewer knowledge to the test with a comprehensive assessment.',
     iconName: 'Exam',
+    slug: 'final-assessment',
   },
 ];

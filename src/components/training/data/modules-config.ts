@@ -7,6 +7,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Learn what TSIP is, your role on the platform, and how the workflow operates.',
     iconName: 'RocketLaunch',
+    slug: 'introduction',
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Understand how spreadsheet quality is evaluated across five key dimensions.',
     iconName: 'Table',
+    slug: 'spreadsheet-tasks',
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Master the art of writing clear, detailed prompts that challenge AI models.',
     iconName: 'PencilSimple',
+    slug: 'prompt-writing',
   },
   {
     id: 4,
@@ -28,6 +31,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Learn to write precise, testable evaluation criteria for grading AI outputs.',
     iconName: 'ListChecks',
+    slug: 'rubric-writing',
   },
   {
     id: 5,
@@ -35,6 +39,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Get familiar with the TSIP dashboard, task workflow, and submission process.',
     iconName: 'Compass',
+    slug: 'platform-navigation',
   },
   {
     id: 6,
@@ -42,6 +47,7 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Practice filling out a real task submission in a safe sandbox environment.',
     iconName: 'Trophy',
+    slug: 'practice-task',
   },
   {
     id: 7,
@@ -49,5 +55,6 @@ export const MODULES: ModuleConfig[] = [
     description:
       'Put your knowledge to the test with realistic scenarios and a final assessment.',
     iconName: 'Exam',
+    slug: 'final-assessment',
   },
 ];

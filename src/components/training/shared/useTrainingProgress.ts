@@ -26,16 +26,17 @@ function persistProgress(progress: TrainingProgress): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
-export function useTrainingProgress() {
+export function useTrainingProgress(initialModuleId?: ModuleId, initialStepIndex?: number) {
   const [progress, setProgress] = useState<TrainingProgress>(loadProgress);
 
   // Viewing state is ephemeral — tracks what module/step the user is looking at.
   // This can differ from persisted progress when reviewing a completed module.
+  // When initialModuleId is provided (from URL params), use it instead of persisted progress.
   const [viewingModule, setViewingModule] = useState<ModuleId>(
-    progress.currentModule
+    initialModuleId ?? progress.currentModule
   );
   const [viewingStepIndex, setViewingStepIndex] = useState(
-    progress.currentStepIndex
+    initialStepIndex ?? (initialModuleId != null ? 0 : progress.currentStepIndex)
   );
 
   // Functional updater — each call sees the latest state, avoiding stale closures

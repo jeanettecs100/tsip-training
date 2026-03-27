@@ -1,7 +1,14 @@
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { REVIEWER_MODULES } from './data/reviewer/r-modules-config';
 import { ModuleViewer, type ModuleWeight } from './ModuleViewer';
+import {
+  getReviewerModuleSlug,
+  getStepSlugByIndex,
+  resolveReviewerModuleSlug,
+  resolveStepSlug,
+} from './shared/slug-utils';
 import { useReviewerTrainingProgress } from './shared/useReviewerTrainingProgress';
 import { getReviewerModuleSteps } from './steps/reviewer-index';
 import { TrainingSidebar } from './TrainingSidebar';
@@ -15,9 +22,21 @@ const REVIEWER_MODULE_WEIGHTS: ModuleWeight[] = [
   { id: 6, title: 'Final Assessment', weight: 0.80 },
 ];
 
+function useResolvedParams() {
+  const { moduleSlug, stepSlug } = useParams();
+  if (!moduleSlug) return {};
+  const moduleId = resolveReviewerModuleSlug(moduleSlug);
+  if (!moduleId) return {};
+  if (!stepSlug) return { moduleId };
+  const stepIndex = resolveStepSlug('reviewer', moduleId, stepSlug);
+  return { moduleId, stepIndex: stepIndex >= 0 ? stepIndex : undefined };
+}
+
 export function ReviewerTraining() {
   const navigate = useNavigate();
-  const reviewer = useReviewerTrainingProgress();
+  const resolved = useResolvedParams();
+
+  const reviewer = useReviewerTrainingProgress(resolved.moduleId, resolved.stepIndex);
 
   if (localStorage.getItem('tsip-reviewer-unlocked') !== 'true') {
     return <Navigate to="/" replace />;
@@ -25,6 +44,23 @@ export function ReviewerTraining() {
 
   const reviewerSteps = getReviewerModuleSteps(reviewer.viewingModule);
   const reviewerModuleConfig = REVIEWER_MODULES.find(m => m.id === reviewer.viewingModule);
+
+  // Keep URL in sync with viewing state
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (!resolved.moduleId) {
+        const mSlug = getReviewerModuleSlug(reviewer.viewingModule);
+        const sSlug = getStepSlugByIndex('reviewer', reviewer.viewingModule, reviewer.viewingStepIndex);
+        navigate(`/reviewer/${mSlug}/${sSlug}`, { replace: true });
+      }
+      return;
+    }
+    const mSlug = getReviewerModuleSlug(reviewer.viewingModule);
+    const sSlug = getStepSlugByIndex('reviewer', reviewer.viewingModule, reviewer.viewingStepIndex);
+    navigate(`/reviewer/${mSlug}/${sSlug}`, { replace: true });
+  }, [reviewer.viewingModule, reviewer.viewingStepIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className='flex h-screen flex-col bg-gray-50 md:flex-row'>
